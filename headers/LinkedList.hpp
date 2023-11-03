@@ -9,6 +9,12 @@ typedef double ListElement_t;
 
 static const ListElement_t LIST_POISON = NAN;
 
+struct ListElemResult
+{
+    ListElement_t value;
+    ErrorCode error;
+};
+
 struct LinkedList
 {
     ListElement_t* data;
@@ -19,30 +25,14 @@ struct LinkedList
     size_t*        prev;
     size_t         freeHead;
 
-    LinkedListResult LinkedList::Init();
-
-    ErrorCode LinkedList::Destructor();
-    
-    ErrorCode LinkedList::Verify();
-
-    ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index);
-
-    ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index);
-
-    ListElemResult LinkedList::Pop(size_t index);
-};
-
-struct LinkedListResult
-{
-    LinkedList value;
-    ErrorCode error;
-};
-
-struct ListElemResult
-{
-    ListElement_t value;
-    ErrorCode error;
-
+    ErrorCode Init();
+    ErrorCode Destructor();
+    ErrorCode Verify();
+    ErrorCode InsertAfter(ListElement_t value, size_t index);
+    ErrorCode InsertBefore(ListElement_t value, size_t index);
+    ErrorCode PushBack(ListElement_t value);
+    ErrorCode PushFront(ListElement_t value);
+    ListElemResult Pop(size_t index);
 };
 
 static const size_t DEFAULT_LIST_CAPACITY = 32;
