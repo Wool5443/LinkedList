@@ -18,6 +18,18 @@ struct LinkedList
     size_t*        next;
     size_t*        prev;
     size_t         freeHead;
+
+    LinkedListResult LinkedList::Init();
+
+    ErrorCode LinkedList::Destructor();
+    
+    ErrorCode LinkedList::Verify();
+
+    ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index);
+
+    ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index);
+
+    ListElemResult LinkedList::Pop(size_t index);
 };
 
 struct LinkedListResult
@@ -26,21 +38,15 @@ struct LinkedListResult
     ErrorCode error;
 };
 
+struct ListElemResult
+{
+    ListElement_t value;
+    ErrorCode error;
+
+};
+
 static const size_t DEFAULT_LIST_CAPACITY = 32;
 
 static const size_t POISON_SIZE_T = 0xFFFFFFFFFFFFFFFF;
-
-LinkedListResult LinkedListInit();
-
-ErrorCode LinkedListDestructor(LinkedList* list);
-
-ErrorCode LinkedListVerify(LinkedList* list);
-
-/**
- * @brief Insert value in list after index.
-*/
-ErrorCode InsertAfter(LinkedList* list, ListElement_t value, size_t index);
-
-ErrorCode InsertBefore(LinkedList* list, ListElement_t value, size_t index);
 
 #endif

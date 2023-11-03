@@ -3,7 +3,7 @@
 #include "LinkedList.hpp"
 #include "MinMax.hpp"
 
-LinkedListResult LinkedListInit()
+LinkedListResult LinkedList::Init()
 {
     LinkedList list = {};
 
@@ -36,90 +36,84 @@ LinkedListResult LinkedListInit()
     return {list, EVERYTHING_FINE};
 }
 
-ErrorCode LinkedListDestructor(LinkedList* list)
+ErrorCode LinkedList::Destructor()
 {
-    MyAssertSoft(list, ERROR_NULLPTR);
+    free(this->data);
+    free(this->next);
+    free(this->prev);
 
-    free(list->data);
-    free(list->next);
-    free(list->prev);
-
-    list->capacity = POISON_SIZE_T;
-    list->head     = POISON_SIZE_T;
-    list->tail     = POISON_SIZE_T;
+    this->capacity = POISON_SIZE_T;
+    this->head     = POISON_SIZE_T;
+    this->tail     = POISON_SIZE_T;
 
     return EVERYTHING_FINE;
 }
 
-ErrorCode LinkedListVerify(LinkedList* list)
+ErrorCode LinkedList::Verify()
 {
-    MyAssertSoft(list, ERROR_NULLPTR);
-    
-    if (!list->data || !list->next || !list->prev)
+    if (!this->data || !this->next || !this->prev)
         return ERROR_NO_MEMORY;
 
-    if (list->capacity <= max(list->head, list->tail) || list->capacity <= list->freeHead)
+    if (this->capacity <= max(this->head, this->tail) || this->capacity <= this->freeHead)
         return ERROR_INDEX_OUT_OF_BOUNDS;
 
     return EVERYTHING_FINE;
 }
 
-ErrorCode InsertAfter(LinkedList* list, ListElement_t value, size_t index)
+ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index)
 {
-    MyAssertSoft(list, ERROR_NULLPTR);
-    MyAssertSoft(index < list->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(list->freeHead != 0, ERROR_NO_MEMORY);
+    MyAssertSoft(index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
+    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
 
-    RETURN_ERROR(LinkedListVerify(list));
+    RETURN_ERROR(this->Verify());
 
-    size_t insertIndex = list->freeHead;
-    list->freeHead     = list->next[list->freeHead];
+    size_t insertIndex = this->freeHead;
+    this->freeHead     = this->next[this->freeHead];
 
-    list->data[insertIndex] = value;
+    this->data[insertIndex] = value;
 
-    list->prev[insertIndex] = index;
-    list->next[insertIndex] = list->next[index];
+    this->prev[insertIndex] = index;
+    this->next[insertIndex] = this->next[index];
 
-    list->prev[list->next[insertIndex]] = insertIndex;
-    list->next[index] = insertIndex;
+    this->prev[this->next[insertIndex]] = insertIndex;
+    this->next[index] = insertIndex;
 
-    if (index == list->tail)
+    if (index == this->tail)
     {
-        list->tail = insertIndex;
-        list->next[insertIndex] = 0;
-        list->prev[0] = insertIndex;
+        this->tail = insertIndex;
+        this->next[insertIndex] = 0;
+        this->prev[0] = insertIndex;
     }
 
-    if (list->head == 0)
-        list->head = insertIndex;
+    if (this->head == 0)
+        this->head = insertIndex;
 
     return EVERYTHING_FINE;
 }
 
-ErrorCode InsertBefore(LinkedList* list, ListElement_t value, size_t index)
+ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index)
 {
-    MyAssertSoft(list, ERROR_NULLPTR);
-    MyAssertSoft(0 < index && index < list->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(list->freeHead != 0, ERROR_NO_MEMORY);
+    MyAssertSoft(0 < index && index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
+    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
 
-    RETURN_ERROR(LinkedListVerify(list));
+    RETURN_ERROR(this->Verify());
 
-    size_t insertIndex = list->freeHead;
-    list->freeHead     = list->next[list->freeHead];
+    size_t insertIndex = this->freeHead;
+    this->freeHead     = this->next[this->freeHead];
 
-    list->data[insertIndex] = value;
+    this->data[insertIndex] = value;
 
-    list->next[insertIndex] = index;
-    list->prev[insertIndex] = list->prev[index];
+    this->next[insertIndex] = index;
+    this->prev[insertIndex] = this->prev[index];
 
-    list->next[list->prev[insertIndex]] = insertIndex;
-    list->prev[index] = insertIndex;
+    this->next[this->prev[insertIndex]] = insertIndex;
+    this->prev[index] = insertIndex;
 
-    if (index == list->head)
+    if (index == this->head)
     {
-        list->head = insertIndex;
-        list->prev[insertIndex] = 0;
-        list->next[0] = insertIndex;
+        this->head = insertIndex;
+        this->prev[insertIndex] = 0;
+        this->next[0] = insertIndex;
     }
     
     return EVERYTHING_FINE;
