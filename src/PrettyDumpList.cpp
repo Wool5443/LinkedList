@@ -76,8 +76,11 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
     "bgcolor = " BACK_GROUND_COLOR ";\n"
 
     "ROOT[style = \"filled\", fillcolor = " ROOT_COLOR ", "
-    "label = \"ROOT|{<head>head = %zu|<tail>tail = %zu}\"];\n",
-    list->head, list->tail
+    "label = \"ROOT|{<head>head = %zu|<tail>tail = %zu}\"];\n"
+
+    "FREE_HEAD[style = \"filled\", fillcolor = " FREE_HEAD_COLOR ", "
+    "label = \"FREE HEAD|<freeHead>freeHead = %zu\"];\n",
+    list->head, list->tail, list->freeHead
     );
     
     for (size_t i = 1; i < list->capacity; i++)
@@ -94,6 +97,7 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
         fprintf(outGraphFile, "->CELL_%zu", i);
 
     fprintf(outGraphFile, " [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
+    fprintf(outGraphFile, "FREE_HEAD->ROOT [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
 
     if (list->head != 0)
         fprintf(outGraphFile, "ROOT:head->CELL_%zu [style = \"bold\", color = white];\n", list->head);
@@ -112,12 +116,6 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
         }
         fprintf(outGraphFile, "[style = \"bold\", color = white];\n");
     }
-
-    fprintf(outGraphFile,
-    "FREE_HEAD[style = \"filled\", fillcolor = " FREE_HEAD_COLOR ", "
-    "label = \"FREE HEAD|<freeHead>freeHead = %zu\"];\n",
-    list->freeHead
-    );
 
     fprintf(outGraphFile, "FREE_HEAD:freeHead->CELL_%zu[style = \"bold\", color = white];\n", list->freeHead);
 

@@ -12,16 +12,16 @@ int main()
     for (size_t i = 1; i < 6; i++)
         list.PushBack((double)i * 10);
 
-    DumpList(&list, "beforePOP.txt", "beforePOP.dot");
+    DumpList(&list, "texts/beforePOP.txt", "dots/beforePOP.dot");
 
     for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
     {
         list.Pop(i);
         char outTextPath[16] = "";
-        sprintf(outTextPath, "pop%zu.txt", i);
+        sprintf(outTextPath, "texts/pop%zu.txt", i);
 
         char outGraphPath[16] = "";
-        sprintf(outGraphPath, "pop%zu.dot", i);
+        sprintf(outGraphPath, "dots/pop%zu.dot", i);
 
         DumpList(&list, outTextPath, outGraphPath);
     }
