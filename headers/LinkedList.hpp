@@ -16,6 +16,7 @@ struct ListElemResult
 struct LinkedList
 {
     ListElement_t* data;
+    size_t         length;
     size_t         capacity;
     size_t         head;
     size_t         tail;
@@ -31,6 +32,7 @@ struct LinkedList
     ErrorCode PushBack(ListElement_t value);
     ErrorCode PushFront(ListElement_t value);
     ListElemResult Pop(size_t index);
+    ListElemResult Pop();
 };
 
 #endif

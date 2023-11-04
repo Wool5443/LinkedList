@@ -9,18 +9,20 @@ int main()
     ErrorCode listError = list.Init();
     MyAssertSoft(!listError, listError);
 
-    for (size_t i = 1; i < 6; i++)
+    size_t n = 16;
+
+    for (size_t i = 1; i < n; i++)
         list.PushBack((double)i * 10);
 
     DumpList(&list, "texts/beforePOP.txt", "dots/beforePOP.dot");
 
-    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+    for (size_t i = 1; i < n; i++)
     {
-        list.Pop(i);
-        char outTextPath[16] = "";
+        list.Pop();
+        char outTextPath[32] = "";
         sprintf(outTextPath, "texts/pop%zu.txt", i);
 
-        char outGraphPath[16] = "";
+        char outGraphPath[32] = "";
         sprintf(outGraphPath, "dots/pop%zu.dot", i);
 
         DumpList(&list, outTextPath, outGraphPath);

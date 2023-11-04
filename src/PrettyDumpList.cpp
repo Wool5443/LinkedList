@@ -44,15 +44,15 @@ ErrorCode DumpListText(LinkedList* list, const char* outTextPath)
 
     fprintf(outTextFile, "\n\n");
 
-    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+    for (size_t i = 0; i < list->capacity; i++)
         fprintf(outTextFile, "Data[%zu] = %lg\n", i, list->data[i]);
     fprintf(outTextFile, "\n\n");
     
-    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+    for (size_t i = 0; i < list->capacity; i++)
         fprintf(outTextFile, "Prev[%zu] = %zu\n", i, list->prev[i]);
     fprintf(outTextFile, "\n\n");
 
-    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+    for (size_t i = 0; i < list->capacity; i++)
         fprintf(outTextFile, "Next[%zu] = %zu\n", i, list->next[i]);
     fprintf(outTextFile, "\n\n");
         
@@ -72,7 +72,7 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
     "digraph\n"
     "{\n"
     "rankdir = LR;\n"
-    "node[shape = record, color = " NODE_FRAME_COLOR ", fontname = " FONT_NAME ", fontsize = " FONT_SIZE "]"
+    "node[shape = record, color = " NODE_FRAME_COLOR ", fontname = " FONT_NAME ", fontsize = " FONT_SIZE "];\n"
     "bgcolor = " BACK_GROUND_COLOR ";\n"
 
     "ROOT[style = \"filled\", fillcolor = " ROOT_COLOR ", "
@@ -93,10 +93,11 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
     }
 
     fprintf(outGraphFile, "ROOT->CELL_1");
-    for (size_t i = 2; i < DEFAULT_LIST_CAPACITY; i++)
+    for (size_t i = 2; i < list->capacity; i++)
         fprintf(outGraphFile, "->CELL_%zu", i);
 
     fprintf(outGraphFile, " [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
+    
     fprintf(outGraphFile, "FREE_HEAD->ROOT [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
 
     if (list->head != 0)

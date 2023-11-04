@@ -4,6 +4,12 @@
 
 static const size_t FREE_ELEM = (size_t)-1;
 
+ErrorCode _listRealloc(LinkedList* list);
+
+ErrorCode _listReallocUp(LinkedList* list, size_t newCapacity);
+
+ErrorCode _listReallocDown(LinkedList* list, size_t newCapacity);
+
 ErrorCode LinkedList::Init()
 {
     *this = {};
@@ -27,6 +33,7 @@ ErrorCode LinkedList::Init()
         prevTemp[i] = FREE_ELEM;
 
     this->data     = dataTemp;
+    this->length   = 1;
     this->capacity = DEFAULT_LIST_CAPACITY;
     this->head     = 0;
     this->tail     = 0;
@@ -64,13 +71,17 @@ ErrorCode LinkedList::Verify()
 ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index)
 {
     MyAssertSoft(index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
     MyAssertSoft(this->prev[index] != FREE_ELEM, ERROR_INDEX_OUT_OF_BOUNDS);
-
     RETURN_ERROR(this->Verify());
+
+    {
+        ErrorCode reallocError = _listRealloc(this);
+        MyAssertSoft(!reallocError, reallocError);
+    }
 
     size_t insertIndex = this->freeHead;
     this->freeHead     = this->next[this->freeHead];
+    this->length++;
 
     this->data[insertIndex] = value;
 
@@ -89,13 +100,17 @@ ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index)
 ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index)
 {
     MyAssertSoft(0 < index && index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
     MyAssertSoft(this->prev[index] != FREE_ELEM, ERROR_INDEX_OUT_OF_BOUNDS);
-
     RETURN_ERROR(this->Verify());
+
+    {
+        ErrorCode reallocError = _listRealloc(this);
+        MyAssertSoft(!reallocError, reallocError);
+    }
 
     size_t insertIndex = this->freeHead;
     this->freeHead     = this->next[this->freeHead];
+    this->length++;
 
     this->data[insertIndex] = value;
 
@@ -113,12 +128,16 @@ ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index)
 
 ErrorCode LinkedList::PushBack(ListElement_t value)
 {
-    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
-
     RETURN_ERROR(this->Verify());
+
+    {
+        ErrorCode reallocError = _listRealloc(this);
+        MyAssertSoft(!reallocError, reallocError);
+    }
 
     size_t insertIndex = this->freeHead;
     this->freeHead     = this->next[this->freeHead];
+    this->length++;
 
     this->data[insertIndex] = value;
     this->next[insertIndex] = 0;
@@ -136,12 +155,16 @@ ErrorCode LinkedList::PushBack(ListElement_t value)
 
 ErrorCode LinkedList::PushFront(ListElement_t value)
 {
-    MyAssertSoft(this->freeHead != 0, ERROR_NO_MEMORY);
-
     RETURN_ERROR(this->Verify());
+
+    {
+        ErrorCode reallocError = _listRealloc(this);
+        MyAssertSoft(!reallocError, reallocError);
+    }
 
     size_t insertIndex = this->freeHead;
     this->freeHead     = this->next[this->freeHead];
+    this->length++;
 
     this->data[insertIndex] = value;
     this->next[insertIndex] = this->head;
@@ -162,8 +185,10 @@ ListElemResult LinkedList::Pop(size_t index)
     MyAssertSoftResult(1 <= index && index < this->capacity, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
     MyAssertSoftResult(this->prev[index] != FREE_ELEM, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
 
-    ListElemResult result = {this->data[index], EVERYTHING_FINE};
+    ListElement_t value = this->data[index];
     this->data[index] = LIST_POISON;
+    this->length--;
+
     this->next[this->prev[index]] = this->next[index];
     this->prev[this->next[index]] = this->prev[index];
 
@@ -182,5 +207,135 @@ ListElemResult LinkedList::Pop(size_t index)
     this->next[index] = this->freeHead;
     this->freeHead = index;
 
-    return result;
+    return {value, _listRealloc(this)};
+}
+
+ListElemResult LinkedList::Pop()
+{
+    MyAssertSoftResult(this->tail != 0, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
+    size_t index = this->tail;
+
+    ListElement_t value = this->data[index];
+    this->data[index] = LIST_POISON;
+    this->length--;
+
+    this->next[this->prev[index]] = this->next[index];
+    this->prev[this->next[index]] = this->prev[index];
+
+    this->tail = this->prev[index];
+    this->prev[0] = this->tail;
+
+    if (index == this->head)
+    {
+        this->head = this->next[index];
+        this->next[0] = this->head;
+    }
+
+    this->prev[index] = FREE_ELEM;
+    this->next[index] = this->freeHead;
+    this->freeHead = index;
+
+    return {value, _listRealloc(this)};
+}
+
+ErrorCode _listRealloc(LinkedList* list)
+{
+    size_t newCapacity = list->capacity;
+
+    if (list->freeHead == 0)
+        newCapacity = list->capacity * LIST_GROW_FACTOR;
+    else if (DEFAULT_LIST_CAPACITY < list->capacity && list->length <= list->capacity / (LIST_GROW_FACTOR * LIST_GROW_FACTOR))
+        newCapacity = max(list->capacity / (LIST_GROW_FACTOR * LIST_GROW_FACTOR), DEFAULT_LIST_CAPACITY);
+
+    if (newCapacity == list->capacity)
+        return EVERYTHING_FINE;
+
+    if (newCapacity > list->capacity)
+        return _listReallocUp(list, newCapacity);
+    return _listReallocDown(list, newCapacity);
+}
+
+ErrorCode _listReallocUp(LinkedList* list, size_t newCapacity)
+{
+    ListElement_t* newData = (ListElement_t*)realloc(list->data, newCapacity * sizeof(*newData));
+    MyAssertSoft(newData, ERROR_NO_MEMORY);
+
+    size_t* newPrev = (size_t*)realloc(list->prev, newCapacity * sizeof(*newPrev));
+    MyAssertSoft(newPrev, ERROR_NO_MEMORY);
+
+    size_t* newNext = (size_t*)realloc(list->next, newCapacity * sizeof(*newNext));
+    MyAssertSoft(newNext, ERROR_NO_MEMORY);
+
+    for (size_t i = list->capacity; i < newCapacity - 1; i++)
+        newNext[i] = i + 1;
+    newNext[newCapacity - 1] = 0;
+
+    for (size_t i = list->capacity; i < newCapacity; i++)
+    {
+        newData[i] = LIST_POISON;
+        newPrev[i] = FREE_ELEM;
+    }
+
+    list->data = newData;
+    list->next = newNext;
+    list->prev = newPrev;
+
+    list->freeHead = list->capacity;
+    list->capacity = newCapacity;
+
+    return EVERYTHING_FINE;
+}
+
+ErrorCode _listReallocDown(LinkedList* list, size_t newCapacity)
+{
+    ListElement_t* newData = (ListElement_t*)calloc(newCapacity, sizeof(*newData));
+    MyAssertSoft(newData, ERROR_NO_MEMORY);
+
+    size_t* newPrev = (size_t*)calloc(newCapacity, sizeof(*newPrev));
+    MyAssertSoft(newPrev, ERROR_NO_MEMORY);
+
+    size_t* newNext = (size_t*)calloc(newCapacity, sizeof(*newNext));
+    MyAssertSoft(newNext, ERROR_NO_MEMORY);
+
+    for (size_t i = 0; i < newCapacity; i++)
+        newData[i] = LIST_POISON;
+    
+    for (size_t i = 0; i < newCapacity - 1; i++)
+        newNext[i] = i + 1;
+
+    for (size_t i = 1; i < newCapacity; i++)
+        newPrev[i] = FREE_ELEM;
+
+    size_t newInd = 1;
+    {
+        size_t oldInd = list->head;
+
+        while (oldInd)
+        {
+            newData[newInd] = list->data[oldInd];
+            newPrev[newInd] = oldInd - 1;
+            oldInd = list->next[oldInd];
+            newInd++;
+        }
+    }
+    newInd--;
+
+    newNext[newInd] = 0;
+
+    newNext[0] = 1;
+    newPrev[0] = newInd;
+
+    free(list->data);
+    free(list->next);
+    free(list->prev);
+
+    list->data = newData;
+    list->next = newNext;
+    list->prev = newPrev;
+
+    list->head = 1;
+    list->tail = newInd;
+    list->capacity = newCapacity;
+
+    return EVERYTHING_FINE;
 }
