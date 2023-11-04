@@ -5,9 +5,7 @@
 #include <math.h>
 #include "Utils.hpp"
 
-typedef double ListElement_t;
-
-static const ListElement_t LIST_POISON = NAN;
+#include "ListSettings.ini"
 
 struct ListElemResult
 {
@@ -34,9 +32,5 @@ struct LinkedList
     ErrorCode PushFront(ListElement_t value);
     ListElemResult Pop(size_t index);
 };
-
-static const size_t DEFAULT_LIST_CAPACITY = 32;
-
-static const size_t POISON_SIZE_T = 0xFFFFFFFFFFFFFFFF;
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "LinkedList.hpp"
 #include "Utils.hpp"
+#include "PrettyDumpList.hpp"
 
 int main()
 {
@@ -17,24 +18,12 @@ int main()
     list.InsertAfter(35, 3);
     list.InsertBefore(25, 3);
 
-    {
-        size_t i = list.head;
-        size_t k = 1;
-        while (i != 0)
-        {
-            printf("List[%zu] = %lg\n", k, list.data[i]);
-            i = list.next[i];
-            k++;
-        }
-    }
-    printf("List head = %zu:%lg\n", list.head, list.data[list.head]);
-    printf("List tail = %zu:%lg\n", list.tail, list.data[list.tail]);
+    DumpList(&list, "beforePOP.txt", "beforePOP.dot");
 
-    printf("\n\n");
+    list.Pop(4);
+    list.Pop(2);
 
-    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
-        printf("Data[%zu] = %lg\n", i, list.data[i]);
-
+    DumpList(&list, "afterPOP.txt", "afterPOP.dot");
 
     return list.Destructor();
 }

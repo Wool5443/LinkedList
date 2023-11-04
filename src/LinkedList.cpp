@@ -1,5 +1,4 @@
 #include <string.h>
-#include "Utils.hpp"
 #include "LinkedList.hpp"
 #include "MinMax.hpp"
 
@@ -44,9 +43,9 @@ ErrorCode LinkedList::Destructor()
     free(this->next);
     free(this->prev);
 
-    this->capacity = POISON_SIZE_T;
-    this->head     = POISON_SIZE_T;
-    this->tail     = POISON_SIZE_T;
+    this->capacity = FREE_ELEM;
+    this->head     = FREE_ELEM;
+    this->tail     = FREE_ELEM;
 
     return EVERYTHING_FINE;
 }
@@ -156,4 +155,21 @@ ErrorCode LinkedList::PushFront(ListElement_t value)
         this->tail = insertIndex;
 
     return EVERYTHING_FINE;
+}
+
+ListElemResult LinkedList::Pop(size_t index)
+{
+    MyAssertSoftResult(1 <= index && index < this->capacity, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
+    MyAssertSoftResult(this->prev[index] != FREE_ELEM, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
+
+    ListElemResult result = {this->data[index], EVERYTHING_FINE};
+    this->data[index] = LIST_POISON;
+    this->next[this->prev[index]] = this->next[index];
+    this->prev[this->next[index]] = this->prev[index];
+
+    this->prev[index] = FREE_ELEM;
+    this->next[index] = this->freeHead;
+    this->freeHead = index;
+
+    return result;
 }
