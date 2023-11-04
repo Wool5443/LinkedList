@@ -167,6 +167,17 @@ ListElemResult LinkedList::Pop(size_t index)
     this->next[this->prev[index]] = this->next[index];
     this->prev[this->next[index]] = this->prev[index];
 
+    if (index == this->tail)
+    {
+        this->tail = this->prev[index];
+        this->prev[0] = this->tail;
+    }
+    if (index == this->head)
+    {
+        this->head = this->next[index];
+        this->next[0] = this->head;
+    }
+
     this->prev[index] = FREE_ELEM;
     this->next[index] = this->freeHead;
     this->freeHead = index;

@@ -11,19 +11,20 @@ int main()
 
     for (size_t i = 1; i < 6; i++)
         list.PushBack((double)i * 10);
-    list.PushFront(11);
-    list.PushFront(12);
-    list.PushFront(13);
-
-    list.InsertAfter(35, 3);
-    list.InsertBefore(25, 3);
 
     DumpList(&list, "beforePOP.txt", "beforePOP.dot");
 
-    list.Pop(4);
-    list.Pop(2);
+    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+    {
+        list.Pop(i);
+        char outTextPath[16] = "";
+        sprintf(outTextPath, "pop%zu.txt", i);
 
-    DumpList(&list, "afterPOP.txt", "afterPOP.dot");
+        char outGraphPath[16] = "";
+        sprintf(outGraphPath, "pop%zu.dot", i);
+
+        DumpList(&list, outTextPath, outGraphPath);
+    }
 
     return list.Destructor();
 }

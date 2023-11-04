@@ -6,8 +6,9 @@
 #define FONT_NAME "\"Fira Code Bold\""
 #define BACK_GROUND_COLOR "\"#de97d4\""
 #define NODE_COLOR "\"#fae1f6\""
-#define NODE_FRAME_COLOR "\"ffffff\""
+#define NODE_FRAME_COLOR "\"#000000\""
 #define ROOT_COLOR "\"#c95b90\""
+#define FREE_HEAD_COLOR "\"#b9e793\""
 
 ErrorCode DumpList(LinkedList* list, const char* outTextPath, const char* outGraphPath)
 {
@@ -39,11 +40,21 @@ ErrorCode DumpListText(LinkedList* list, const char* outTextPath)
     }
     fprintf(outTextFile, "List head = %zu:%lg\n", list->head, list->data[list->head]);
     fprintf(outTextFile, "List tail = %zu:%lg\n", list->tail, list->data[list->tail]);
+    fprintf(outTextFile, "List free head = %zu\n", list->freeHead);
 
     fprintf(outTextFile, "\n\n");
 
     for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
         fprintf(outTextFile, "Data[%zu] = %lg\n", i, list->data[i]);
+    fprintf(outTextFile, "\n\n");
+    
+    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+        fprintf(outTextFile, "Prev[%zu] = %zu\n", i, list->prev[i]);
+    fprintf(outTextFile, "\n\n");
+
+    for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
+        fprintf(outTextFile, "Next[%zu] = %zu\n", i, list->next[i]);
+    fprintf(outTextFile, "\n\n");
         
     fclose(outTextFile);
 
@@ -84,9 +95,13 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
 
     fprintf(outGraphFile, " [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
 
-    fprintf(outGraphFile, "ROOT:head->CELL_%zu [color = white];\n", list->head);
-    fprintf(outGraphFile, "ROOT:tail->CELL_%zu [color = white];\n", list->tail);
+    if (list->head != 0)
+        fprintf(outGraphFile, "ROOT:head->CELL_%zu [style = \"bold\", color = white];\n", list->head);
+    
+    if (list->tail != 0)
+        fprintf(outGraphFile, "ROOT:tail->CELL_%zu [style = \"bold\", color = white];\n", list->tail);
 
+    if (list->head != list->tail)
     {
         fprintf(outGraphFile, "CELL_%zu", list->head);
         size_t index = list->next[list->head];
@@ -95,8 +110,16 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
             fprintf(outGraphFile, "->CELL_%zu", index);
             index = list->next[index];
         }
-        fprintf(outGraphFile, "[color = white];\n");
+        fprintf(outGraphFile, "[style = \"bold\", color = white];\n");
     }
+
+    fprintf(outGraphFile,
+    "FREE_HEAD[style = \"filled\", fillcolor = " FREE_HEAD_COLOR ", "
+    "label = \"FREE HEAD|<freeHead>freeHead = %zu\"];\n",
+    list->freeHead
+    );
+
+    fprintf(outGraphFile, "FREE_HEAD:freeHead->CELL_%zu[style = \"bold\", color = white];\n", list->freeHead);
 
     fprintf(outGraphFile, "}\n");
 
