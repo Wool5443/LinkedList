@@ -8,7 +8,7 @@ ErrorCode _listRealloc(LinkedList* list);
 
 ErrorCode _listReallocUp(LinkedList* list, size_t newCapacity);
 
-ErrorCode _listReallocDown(LinkedList* list, size_t newCapacity);
+ErrorCode _untangleAndRealloc(LinkedList* list, size_t newCapacity);
 
 ErrorCode LinkedList::Init()
 {
@@ -240,19 +240,12 @@ ListElemResult LinkedList::Pop()
 
 ErrorCode _listRealloc(LinkedList* list)
 {
-    size_t newCapacity = list->capacity;
+    MyAssertSoft(list, ERROR_NULLPTR);
 
-    if (list->freeHead == 0)
-        newCapacity = list->capacity * LIST_GROW_FACTOR;
-    else if (DEFAULT_LIST_CAPACITY < list->capacity && list->length <= list->capacity / (LIST_GROW_FACTOR * LIST_GROW_FACTOR))
-        newCapacity = max(list->capacity / (LIST_GROW_FACTOR * LIST_GROW_FACTOR), DEFAULT_LIST_CAPACITY);
+    if (!list->freeHead)
+        return _listReallocUp(list, list->capacity * LIST_GROW_FACTOR);
 
-    if (newCapacity == list->capacity)
-        return EVERYTHING_FINE;
-
-    if (newCapacity > list->capacity)
-        return _listReallocUp(list, newCapacity);
-    return _listReallocDown(list, newCapacity);
+    return EVERYTHING_FINE;
 }
 
 ErrorCode _listReallocUp(LinkedList* list, size_t newCapacity)
@@ -286,8 +279,24 @@ ErrorCode _listReallocUp(LinkedList* list, size_t newCapacity)
     return EVERYTHING_FINE;
 }
 
-ErrorCode _listReallocDown(LinkedList* list, size_t newCapacity)
+ErrorCode LinkedList::ReallocDown()
 {
+    size_t newCapacity = max(DEFAULT_LIST_CAPACITY, this->length);
+    ErrorCode error = _untangleAndRealloc(this, newCapacity);
+    if (!error)
+        this->freeHead = this->length % newCapacity;
+    return error;
+}
+
+ErrorCode LinkedList::Untangle()
+{
+    return _untangleAndRealloc(this, this->capacity);
+}
+
+ErrorCode _untangleAndRealloc(LinkedList* list, size_t newCapacity)
+{
+    MyAssertSoft(list, ERROR_NULLPTR);
+
     ListElement_t* newData = (ListElement_t*)calloc(newCapacity, sizeof(*newData));
     MyAssertSoft(newData, ERROR_NO_MEMORY);
 
@@ -333,7 +342,7 @@ ErrorCode _listReallocDown(LinkedList* list, size_t newCapacity)
     list->next = newNext;
     list->prev = newPrev;
 
-    list->head = 1;
+    list->head = list->length > 1 ? 1 : 0;
     list->tail = newInd;
     list->capacity = newCapacity;
 

@@ -33,6 +33,8 @@ struct LinkedList
     ErrorCode PushFront(ListElement_t value);
     ListElemResult Pop(size_t index);
     ListElemResult Pop();
+    ErrorCode ReallocDown();
+    ErrorCode Untangle();
 };
 
 #endif

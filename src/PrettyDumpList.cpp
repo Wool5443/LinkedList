@@ -98,12 +98,10 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
 
     fprintf(outGraphFile, " [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
     
-    fprintf(outGraphFile, "FREE_HEAD->ROOT [weight = 1000000000, color = " BACK_GROUND_COLOR "];\n");
-
-    if (list->head != 0)
+    if (list->head)
         fprintf(outGraphFile, "ROOT:head->CELL_%zu [style = \"bold\", color = white];\n", list->head);
     
-    if (list->tail != 0)
+    if (list->tail)
         fprintf(outGraphFile, "ROOT:tail->CELL_%zu [style = \"bold\", color = white];\n", list->tail);
 
     if (list->head != list->tail)
@@ -118,7 +116,8 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
         fprintf(outGraphFile, "[style = \"bold\", color = white];\n");
     }
 
-    fprintf(outGraphFile, "FREE_HEAD:freeHead->CELL_%zu[style = \"bold\", color = white];\n", list->freeHead);
+    if (list->freeHead)
+        fprintf(outGraphFile, "FREE_HEAD:freeHead->CELL_%zu[style = \"bold\", color = white];\n", list->freeHead);
 
     fprintf(outGraphFile, "}\n");
 
