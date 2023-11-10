@@ -36,6 +36,7 @@ int main()
     list.PushBack(2);
     list.PushBack(3);
     list.PushBack(4);
+    list.PushBack(5);
 
     DumpList(&list, list.Verify(), "texts/afterAll.txt", "dots/afterAll.dot");
 
