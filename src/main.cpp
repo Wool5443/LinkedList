@@ -5,39 +5,39 @@
 
 int main()
 {
-    LinkedList list;
+    LinkedList list = {};
     ErrorCode listError = list.Init();
     MyAssertSoft(!listError, listError);
 
-    size_t n = 16;
+    size_t n = 3;
 
     for (size_t i = 1; i < n; i++)
         list.PushBack((double)i * 10);
 
-    DumpList(&list, "texts/before.txt", "dots/before.dot");
+    DumpList(&list, list.Verify(), "texts/before.txt", "dots/before.dot");
 
     list.InsertAfter(15, 1);
-    list.InsertAfter(35, 3);
-    list.InsertAfter(65, 6);
-    list.InsertAfter(75, 7);
+    DumpList(&list, list.Verify(), "texts/after1.txt", "dots/after1.dot");
+    list.InsertAfter(25, 2);
+    DumpList(&list, list.Verify(), "texts/after2.txt", "dots/after2.dot");
+    list.InsertAfter(30, 4);
+    DumpList(&list, list.Verify(), "texts/after3.txt", "dots/after3.dot");
 
-    list.InsertBefore(13, 16);
+    // size_t length = list.length;
+    // for (size_t i = 1; i < length; i++)
+    //     list.Pop(i);
 
-    size_t length = list.length;
-    for (size_t i = 1; i < length; i++)
-        list.Pop(i);
 
-    DumpList(&list, "texts/after.txt", "dots/after.dot");
+    list.ReallocDownAndUntangle();
 
-    list.ReallocDown();
-
-    DumpList(&list, "texts/after2.txt", "dots/after2.dot");
+    DumpList(&list, list.Verify(), "texts/afterUntangle.txt", "dots/afterUntangle.dot");
 
     list.PushBack(1);
     list.PushBack(2);
     list.PushBack(3);
+    list.PushBack(4);
 
-    DumpList(&list, "texts/after3.txt", "dots/after3.dot");
+    DumpList(&list, list.Verify(), "texts/afterAll.txt", "dots/afterAll.dot");
 
     return list.Destructor();
 }

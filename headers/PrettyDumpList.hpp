@@ -4,9 +4,15 @@
 #include "Utils.hpp"
 #include "LinkedList.hpp"
 
-ErrorCode DumpList(LinkedList* list, const char* outTextPath, const char* outGraphPath);
+ErrorCode DumpList(LinkedList* list, ErrorCode error, const char* outTextPath, const char* outGraphPath);
 
-ErrorCode DumpListText(LinkedList* list, const char* outTextPath);
+ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath);
+#define DumpListText(list, error, outTextPath)                              \
+({                                                                          \
+    SourceCodePosition _caller = { __FILE__, __LINE__, __func__ };          \
+    ErrorCode _dumpError = error;                                           \
+    _dumpListText(list, _dumpError, &_caller, outTextPath);                 \
+})
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath);
 
