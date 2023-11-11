@@ -40,7 +40,7 @@ We can also push elements to front.
 ```c++
 list.PushFront(-1); // {-1, 0, 0.5, 0.75, 1, 1.5, 2, 3}
 ```
-We can pop elements.
+We can pop elements. Pop without argument pop the tail.
 ```c++
 ListElemResult firstEl = list.Pop(1);
 if (!firstEl.error)
