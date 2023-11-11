@@ -54,12 +54,6 @@ We can validate list.
 ```c++
 ErrorCode listError = list.Verify();
 ```
-
-We can reallocate our list down and untangle it.
-```c++
-list.ReallocDownWithUntangle();
-```
-
 We can also dump our list in text or graphics.
 ```c++
 DumpList(&list, list.Verify(), "textDump.txt", "graphDumpt.dot");
