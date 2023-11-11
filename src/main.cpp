@@ -23,10 +23,25 @@ int main()
     list.InsertAfter(30, 4);
     DumpList(&list, list.Verify(), "texts/after3.txt", "dots/after3.dot");
 
-    // size_t length = list.length;
-    // for (size_t i = 1; i < length; i++)
-    //     list.Pop(i);
+    size_t length = list.length;
+    for (size_t i = 1; i < length; i++)
+    {
+        list.Pop();
+        char txtFile[32] = "";
+        char dotFile[32] = "";
+        sprintf(txtFile, "texts/afterPop%zu.txt", i);
+        sprintf(dotFile, "dots/afterPop%zu.dot", i);
+        DumpList(&list, list.Verify(), txtFile, dotFile);
+    }
 
+    list.PushBack(10);
+    list.PushBack(20);
+    list.PushBack(30);
+
+    list.InsertAfter(15, 1);
+    list.InsertBefore(13, 4);
+
+    DumpList(&list, list.Verify(), "texts/afterAllPop.txt", "dots/afterAllPop.dot");
 
     list.ReallocDownAndUntangle();
 

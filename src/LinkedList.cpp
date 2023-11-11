@@ -80,6 +80,9 @@ ErrorCode LinkedList::Verify()
 {
     if (!this->data || !this->next || !this->prev)
         return ERROR_NO_MEMORY;
+    
+    if (*this->head == FREE_ELEM || *this->tail == FREE_ELEM || this->freeHead == FREE_ELEM)
+        return ERROR_INDEX_OUT_OF_BOUNDS;
 
     if (this->capacity <= *this->head || this->capacity <= *this->tail ||
                                          this->capacity < this->length)
@@ -241,6 +244,9 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     {
         size_t oldInd = *this->head;
 
+        if (*this->head)
+            newNext[0] = 1;
+
         while (oldInd)
         {
             newData[newInd] = this->data[oldInd];
@@ -252,8 +258,6 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     newInd--;
 
     newNext[newInd] = 0;
-
-    newNext[0] = 1;
     newPrev[0] = newInd;
 
     free(this->data);
@@ -271,4 +275,22 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     this->freeHead = this->length % newCapacity;
 
     return EVERYTHING_FINE;
+}
+
+ListElemIndexResult LinkedList::FindElement(size_t number)
+{
+    MyAssertSoftResult(0 < number && number < this->capacity, 0, ERROR_INDEX_OUT_OF_BOUNDS);
+
+    ERR_DUMP_RET_RES(this, this->Verify(), 0);
+    
+    size_t curEl = *this->head;
+    size_t i = 1;
+
+    while (i < number && curEl)
+    {
+        curEl = this->next[curEl];
+        i++;
+    }
+
+    return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
 }

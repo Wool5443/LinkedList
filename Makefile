@@ -31,5 +31,8 @@ draw : $(IMAGES)
 $(PREF_IMAGES)%.png : $(PREF_DOTS)%.dot
 	dot $^ -T png -o $@
 
+dirs:
+	mkdir obj images dots texts
+
 clean :
 	rm $(TARGET) $(PREF_OBJ)*.o $(PREF_DOTS)*.dot $(PREF_IMAGES)*.png texts/*.txt
