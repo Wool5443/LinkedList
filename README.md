@@ -18,6 +18,7 @@ list.Init();
 ```
 
 We can destroy it.
+
 ```c++
 list.Destructor();
 ```
@@ -37,10 +38,12 @@ list.InsertAfter(1.5, 2);             // {0, 0.5, 0.75, 1, 1.5, 2, 3}
 ```
 
 We can also push elements to front.
+
 ```c++
 list.PushFront(-1); // {-1, 0, 0.5, 0.75, 1, 1.5, 2, 3}
 ```
 We can pop elements. Pop without argument pop the tail.
+
 ```c++
 ListElemResult firstEl = list.Pop(1);
 if (!firstEl.error)
@@ -51,13 +54,17 @@ else
 ```
 
 We can validate list.
+
 ```c++
 ErrorCode listError = list.Verify();
 ```
+
 We can also dump our list in text or graphics.
+
 ```c++
 DumpList(&list, list.Verify(), "textDump.txt", "graphDumpt.dot");
 ```
+
 [beforeUntangle.txt](examples/beforeUntangle.txt)
 ```txt
 List[0x7ffcd5832b30] called from src/main.cpp(73) main()
@@ -132,6 +139,7 @@ List condition - EVERYTHING_FINE[0]
     *[15] = 0
 }
 ```
+
 Here not nonexistent nodes are nan in data, FREE in prev. next is a single linked list of free nodes used for adding new elements.
 
 You can see elements in data are not in order. We can fix this by calling ReallocDownWithUntangle().
@@ -187,7 +195,7 @@ List condition - EVERYTHING_FINE[0]
 }
 ```
 
-Graph dumps are in [images](images/). Example ones are in [examples](examples/)
+Graph dumps are in [images](images/). Example ones are in [examples](examples/).
 
 You can use dot to draw your own graph dumps.
 ```bash
