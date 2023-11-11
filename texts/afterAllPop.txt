@@ -1,0 +1,45 @@
+List[0x7fff32ed4610] called from src/main.cpp(44) main()
+List condition - EVERYTHING_FINE[0]
+{
+    length = 6
+    capacity = 8
+    head = 1
+    tail = 2
+    free head = 6
+    list:
+    *[1] = 10
+    *[2] = 13
+    *[3] = 15
+    *[4] = 20
+    *[5] = 30
+
+    data[0x55de02d632a0]
+    *[0] = nan
+    *[1] = 10
+    *[2] = 30
+    *[3] = 20
+    *[4] = 15
+    *[5] = 13
+    *[6] = nan
+    *[7] = nan
+
+    prev[0x55de02d63340]
+    *[0] = 2
+    *[1] = 0
+    *[2] = 3
+    *[3] = 4
+    *[4] = 5
+    *[5] = 1
+     [6] = FREE
+     [7] = FREE
+
+    next[0x55de02d632f0]
+    *[0] = 1
+    *[1] = 5
+    *[2] = 0
+    *[3] = 2
+    *[4] = 3
+    *[5] = 4
+    *[6] = 7
+    *[7] = 0
+}

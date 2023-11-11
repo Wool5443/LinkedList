@@ -1,6 +1,3 @@
 *.json
 *.o
-*.dot
-*.png
-*.txt
 main
