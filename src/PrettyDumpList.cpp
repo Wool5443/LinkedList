@@ -10,12 +10,12 @@
 #define ROOT_COLOR "\"#c95b90\""
 #define FREE_HEAD_COLOR "\"#b9e793\""
 
-ErrorCode DumpList(LinkedList* list, ErrorCode error, const char* outTextPath, const char* outGraphPath)
+ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath, const char* outGraphPath)
 {
     MyAssertSoft(outTextPath, ERROR_BAD_FILE);
     MyAssertSoft(outGraphPath, ERROR_BAD_FILE);
 
-    RETURN_ERROR(DumpListText(list, error, outTextPath));
+    RETURN_ERROR(_dumpListText(list, error, caller, outTextPath));
     RETURN_ERROR(DumpListGraph(list, outGraphPath));
     
     return EVERYTHING_FINE;

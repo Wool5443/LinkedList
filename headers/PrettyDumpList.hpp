@@ -4,14 +4,20 @@
 #include "Utils.hpp"
 #include "LinkedList.hpp"
 
-ErrorCode DumpList(LinkedList* list, ErrorCode error, const char* outTextPath, const char* outGraphPath);
-
-ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath);
-#define DumpListText(list, error, outTextPath)                              \
+ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath, const char* outGraphPath);
+#define DumpList(listPtr, error, outTextPath, outGraphPath)                 \
 ({                                                                          \
     SourceCodePosition _caller = { __FILE__, __LINE__, __func__ };          \
     ErrorCode _dumpError = error;                                           \
-    _dumpListText(list, _dumpError, &_caller, outTextPath);                 \
+    _dumpList(listPtr, _dumpError, &_caller, outTextPath, outGraphPath);    \
+})
+
+ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath);
+#define DumpListText(listPtr, error, outTextPath)                           \
+({                                                                          \
+    SourceCodePosition _caller = { __FILE__, __LINE__, __func__ };          \
+    ErrorCode _dumpError = error;                                           \
+    _dumpListText(listPtr, _dumpError, &_caller, outTextPath);              \
 })
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath);
