@@ -27,8 +27,8 @@ int main()
     for (size_t i = 1; i < length; i++)
     {
         list.Pop();
-        char txtFile[32] = "";
-        char dotFile[32] = "";
+        char txtFile[64] = "";
+        char dotFile[64] = "";
         sprintf(txtFile, "texts/afterPop%zu.txt", i);
         sprintf(dotFile, "dots/afterPop%zu.dot", i);
         DumpList(&list, list.Verify(), txtFile, dotFile);
