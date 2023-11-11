@@ -5,6 +5,7 @@
 
 int main()
 {
+    StartHtmlLogging();
     LinkedList list = {};
     ErrorCode listError = list.Init();
     MyAssertSoft(!listError, listError);
@@ -14,14 +15,14 @@ int main()
     for (size_t i = 1; i < n; i++)
         list.PushBack((double)i * 10);
 
-    DumpList(&list, list.Verify(), "texts/before.txt", "dots/before.dot");
+    DumpList(&list, list.Verify());
 
     list.InsertAfter(15, 1);
-    DumpList(&list, list.Verify(), "texts/after1.txt", "dots/after1.dot");
+    DumpList(&list, list.Verify());
     list.InsertAfter(25, 2);
-    DumpList(&list, list.Verify(), "texts/after2.txt", "dots/after2.dot");
+    DumpList(&list, list.Verify());
     list.InsertAfter(30, 4);
-    DumpList(&list, list.Verify(), "texts/after3.txt", "dots/after3.dot");
+    DumpList(&list, list.Verify());
 
     size_t length = list.length;
     for (size_t i = 1; i < length; i++)
@@ -31,7 +32,7 @@ int main()
         char dotFile[64] = "";
         sprintf(txtFile, "texts/afterPop%zu.txt", i);
         sprintf(dotFile, "dots/afterPop%zu.dot", i);
-        DumpList(&list, list.Verify(), txtFile, dotFile);
+        DumpList(&list, list.Verify());
     }
 
     list.PushBack(10);
@@ -40,12 +41,13 @@ int main()
 
     list.InsertAfter(15, 1);
     list.InsertBefore(13, 4);
+    list.InsertBefore(5, 1);
 
-    DumpList(&list, list.Verify(), "texts/afterAllPop.txt", "dots/afterAllPop.dot");
+    DumpList(&list, list.Verify());
 
     list.ReallocDownAndUntangle();
 
-    DumpList(&list, list.Verify(), "texts/afterUntangle.txt", "dots/afterUntangle.dot");
+    DumpList(&list, list.Verify());
 
     list.PushBack(1);
     list.PushBack(2);
@@ -53,7 +55,8 @@ int main()
     list.PushBack(4);
     list.PushBack(5);
 
-    DumpList(&list, list.Verify(), "texts/afterAll.txt", "dots/afterAll.dot");
-
+    DumpList(&list, list.Verify());
+    
+    EndHtmlLogging();
     return list.Destructor();
 }

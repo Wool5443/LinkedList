@@ -4,12 +4,15 @@
 #include "Utils.hpp"
 #include "LinkedList.hpp"
 
-ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath, const char* outGraphPath);
-#define DumpList(listPtr, error, outTextPath, outGraphPath)                 \
+static size_t DUMP_ITER = 0;
+static FILE* HTML_FILE = NULL;
+
+ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller);
+#define DumpList(listPtr, error)                                            \
 ({                                                                          \
     SourceCodePosition _caller = { __FILE__, __LINE__, __func__ };          \
     ErrorCode _dumpError = error;                                           \
-    _dumpList(listPtr, _dumpError, &_caller, outTextPath, outGraphPath);    \
+    _dumpList(listPtr, _dumpError, &_caller);                               \
 })
 
 ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath);
@@ -21,5 +24,9 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
 })
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath);
+
+ErrorCode StartHtmlLogging();
+
+ErrorCode EndHtmlLogging();
 
 #endif

@@ -21,18 +21,8 @@ $(TARGET) : $(OBJ)
 $(PREF_OBJ)%.o : $(PREF_SRC)%.cpp
 	$(CC) $(HEADERS) $(CFLAGS) -c $^ -o $@
 
-PREF_DOTS=dots/
-PREF_IMAGES=images/
-DOTS = $(wildcard $(PREF_DOTS)*.dot)
-IMAGES = $(patsubst $(PREF_DOTS)%.dot, $(PREF_IMAGES)%.png, $(DOTS))
-
-draw : $(IMAGES)
-
-$(PREF_IMAGES)%.png : $(PREF_DOTS)%.dot
-	dot $^ -T png -o $@
-
 dirs:
-	mkdir obj images dots texts
+	mkdir obj log log/txt log/dot log/img
 
 clean :
-	rm $(TARGET) $(PREF_OBJ)*.o $(PREF_DOTS)*.dot $(PREF_IMAGES)*.png texts/*.txt
+	rm $(TARGET) $(PREF_OBJ)*.o log/img/*.png log/dot/*.dot log/txt/*.txt

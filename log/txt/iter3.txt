@@ -1,4 +1,4 @@
-List[0x7fff32ed4610] called from src/main.cpp(48) main()
+List[0x7ffebf7941c0] called from src/main.cpp(25) main()
 List condition - EVERYTHING_FINE[0]
 {
     length = 6
@@ -8,36 +8,36 @@ List condition - EVERYTHING_FINE[0]
     free head = 6
     list:
     *[1] = 10
-    *[2] = 13
-    *[3] = 15
-    *[4] = 20
+    *[2] = 15
+    *[3] = 20
+    *[4] = 25
     *[5] = 30
 
-    data[0x55de02d63570]
+    data[0x606000000020]
     *[0] = nan
     *[1] = 10
-    *[2] = 13
+    *[2] = 20
     *[3] = 15
-    *[4] = 20
+    *[4] = 25
     *[5] = 30
     *[6] = nan
     *[7] = nan
 
-    prev[0x55de02d635c0]
+    prev[0x6060000000e0]
     *[0] = 5
     *[1] = 0
-    *[2] = 1
-    *[3] = 2
-    *[4] = 3
+    *[2] = 3
+    *[3] = 1
+    *[4] = 2
     *[5] = 4
      [6] = FREE
      [7] = FREE
 
-    next[0x55de02d63610]
+    next[0x606000000080]
     *[0] = 1
-    *[1] = 2
-    *[2] = 3
-    *[3] = 4
+    *[1] = 3
+    *[2] = 4
+    *[3] = 2
     *[4] = 5
     *[5] = 0
     *[6] = 7

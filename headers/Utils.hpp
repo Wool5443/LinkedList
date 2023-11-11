@@ -187,6 +187,14 @@ bool CheckInput(FILE* where);
  */
 void SetConsoleColor(FILE* where, enum Color color);
 
+/**
+ * @brief Get the file size.
+ * 
+ * @param path to the file.
+ * @return size.
+ */
+size_t GetFileSize(const char* path);
+
 unsigned int CalculateHash(const void *key, size_t len, unsigned int seed);
 
 #endif

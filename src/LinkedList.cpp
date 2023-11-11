@@ -8,7 +8,7 @@
     ErrorCode _error = error;                                           \
     if (_error)                                                         \
     {                                                                   \
-        DumpList(listPtr, _error, DEFAULT_TEXT_LOG, DEFAULT_GRAPH_LOG); \
+        DumpList(listPtr, _error);                                      \
         return _error;                                                  \
     }                                                                   \
 }
@@ -18,7 +18,7 @@
     ErrorCode _error = error;                                           \
     if (_error)                                                         \
     {                                                                   \
-        DumpList(listPtr, _error, DEFAULT_TEXT_LOG, DEFAULT_GRAPH_LOG); \
+        DumpList(listPtr, _error);                                      \
         return { value, _error };                                       \
     }                                                                   \
 }
@@ -117,26 +117,7 @@ ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index)
 
 ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index)
 {
-    MyAssertSoft(0 < index && index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(this->prev[index] != FREE_ELEM, ERROR_INDEX_OUT_OF_BOUNDS);
-
-    ERR_DUMP_RET(this, this->Verify());
-
-    RETURN_ERROR(_listReallocUp(this));
-
-    size_t insertIndex = this->freeHead;
-    this->freeHead     = this->next[this->freeHead];
-    this->length++;
-
-    this->data[insertIndex] = value;
-
-    this->next[insertIndex] = index;
-    this->prev[insertIndex] = this->prev[index];
-
-    this->next[this->prev[index]] = insertIndex;
-    this->prev[index]             = insertIndex;
-
-    return EVERYTHING_FINE;
+    return this->InsertAfter(value, this->prev[index]);
 }
 
 ErrorCode LinkedList::PushBack(ListElement_t value)

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "ListSettings.ini"
 #include "PrettyDumpList.hpp"
 
@@ -10,14 +11,63 @@
 #define ROOT_COLOR "\"#c95b90\""
 #define FREE_HEAD_COLOR "\"#b9e793\""
 
-ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath, const char* outGraphPath)
+static const size_t MAX_LEN_PATH    = 128;
+static const size_t MAX_COMMAND_LEN = 512;
+
+ErrorCode StartHtmlLogging()
 {
-    MyAssertSoft(outTextPath, ERROR_BAD_FILE);
-    MyAssertSoft(outGraphPath, ERROR_BAD_FILE);
+    HTML_FILE = fopen(DEFAULT_HTML_LOG, "w");
+    MyAssertSoft(HTML_FILE, ERROR_BAD_FILE);
+
+    return EVERYTHING_FINE;
+}
+
+ErrorCode EndHtmlLogging()
+{
+    if (HTML_FILE)
+        fclose(HTML_FILE);
+    HTML_FILE = NULL;
+
+    return EVERYTHING_FINE;
+}
+
+ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller)
+{
+    char outTextPath[MAX_LEN_PATH] = "";
+    sprintf(outTextPath, "log/txt/iter%zu.txt", DUMP_ITER);
+
+    char outGraphPath[MAX_LEN_PATH] = "";
+    sprintf(outGraphPath, "log/dot/iter%zu.dot", DUMP_ITER);
 
     RETURN_ERROR(_dumpListText(list, error, caller, outTextPath));
     RETURN_ERROR(DumpListGraph(list, outGraphPath));
+
+    char outImgPath[MAX_LEN_PATH] = "";
+    sprintf(outImgPath, "log/img/iter%zu.png", DUMP_ITER);
     
+    char command[MAX_COMMAND_LEN] = "";
+    sprintf(command, "dot %s -T png -o %s", outGraphPath, outImgPath);
+
+    system(command);
+
+    if (HTML_FILE)
+    {
+        fprintf(HTML_FILE, "<h1>iter%zu</h1>\n", DUMP_ITER);
+        
+        size_t txtSize = GetFileSize(outTextPath);
+        char* txtData = (char*)calloc(txtSize + 1, 1);
+
+        FILE* txt = fopen(outTextPath, "r");
+        MyAssertSoft(txt, ERROR_BAD_FILE);
+        fread(txtData, 1, txtSize, txt);
+        fclose(txt);
+
+        fprintf(HTML_FILE, "<pre>\n%s</pre>\n", txtData);
+        free(txtData);
+
+        fprintf(HTML_FILE, "<img src = \"%s\"/>\n", outImgPath);
+    }
+    DUMP_ITER++;
     return EVERYTHING_FINE;
 }
 
