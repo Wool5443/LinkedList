@@ -48,10 +48,10 @@ ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* calle
     sprintf(outGraphPath, "log/dot/iter%zu.dot", DUMP_ITER);
 
     if (HTML_FILE)
-        fprintf(HTML_FILE, "<h1>iter%zu</h1>\n<pre>\n", DUMP_ITER);
+        fprintf(HTML_FILE, "<h1>Iteration %zu</h1>\n<pre>\n", DUMP_ITER);
 
     RETURN_ERROR(_dumpListText(list, error, caller, outTextPath));
-    
+
     if (HTML_FILE)
         fprintf(HTML_FILE, "</pre>\n");
 
