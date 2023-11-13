@@ -23,16 +23,16 @@ struct ListElemIndexResult
 
 struct LinkedList
 {
-    ListElement_t*      data;
-    size_t              length;
-    size_t              capacity;
-    size_t*             head;
-    size_t*             tail;
+    ListElement_t* data;
+    size_t         length;
+    size_t         capacity;
+    size_t*        head;
+    size_t*        tail;
 
-    size_t*             next;
-    size_t*             prev;
+    size_t*        next;
+    size_t*        prev;
 
-    size_t              freeHead;
+    size_t         freeHead;
 
     /**
      * @brief Initializes an empty list with default capacity.
