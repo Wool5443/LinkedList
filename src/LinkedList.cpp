@@ -122,16 +122,12 @@ ErrorCode LinkedList::InsertBefore(ListElement_t value, size_t index)
 
 ErrorCode LinkedList::PushBack(ListElement_t value)
 {
-    ERR_DUMP_RET(this, this->InsertAfter(value, *this->tail));
-
-    return EVERYTHING_FINE;
+    return this->InsertAfter(value, *this->tail);
 }
 
 ErrorCode LinkedList::PushFront(ListElement_t value)
 {
-    ERR_DUMP_RET(this, this->InsertBefore(value, *this->head));
-
-    return EVERYTHING_FINE;
+    return this->InsertBefore(value, *this->head);
 }
 
 ListElemResult LinkedList::Pop(size_t index)
