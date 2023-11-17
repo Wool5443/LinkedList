@@ -16,10 +16,10 @@ CELL_8[style = "filled", fillcolor = "#fae1f6", label = "index = 8|value\n2|{pre
 CELL_9[style = "filled", fillcolor = "#fae1f6", label = "index = 9|value\n3|{prev = 8|next = 10}"];
 CELL_10[style = "filled", fillcolor = "#fae1f6", label = "index = 10|value\n4|{prev = 9|next = 11}"];
 CELL_11[style = "filled", fillcolor = "#fae1f6", label = "index = 11|value\n5|{prev = 10|next = 0}"];
-CELL_12[style = "filled", fillcolor = "#fae1f6", label = "index = 12|value\nnan|{prev = 18446744073709551615|next = 13}"];
-CELL_13[style = "filled", fillcolor = "#fae1f6", label = "index = 13|value\nnan|{prev = 18446744073709551615|next = 14}"];
-CELL_14[style = "filled", fillcolor = "#fae1f6", label = "index = 14|value\nnan|{prev = 18446744073709551615|next = 15}"];
-CELL_15[style = "filled", fillcolor = "#fae1f6", label = "index = 15|value\nnan|{prev = 18446744073709551615|next = 0}"];
+CELL_12[style = "filled", fillcolor = "#fae1f6", label = "index = 12|value\nPOISON|{prev = FREE|next = 13}"];
+CELL_13[style = "filled", fillcolor = "#fae1f6", label = "index = 13|value\nPOISON|{prev = FREE|next = 14}"];
+CELL_14[style = "filled", fillcolor = "#fae1f6", label = "index = 14|value\nPOISON|{prev = FREE|next = 15}"];
+CELL_15[style = "filled", fillcolor = "#fae1f6", label = "index = 15|value\nPOISON|{prev = FREE|next = 0}"];
 ROOT->CELL_1->CELL_2->CELL_3->CELL_4->CELL_5->CELL_6->CELL_7->CELL_8->CELL_9->CELL_10->CELL_11->CELL_12->CELL_13->CELL_14->CELL_15 [weight = 1000000000, color = "#de97d4"];
 ROOT:head->CELL_1 [style = "bold", color = white];
 ROOT:tail->CELL_11 [style = "bold", color = white];

@@ -1,4 +1,4 @@
-List[0x7fff09cb3e10] called from src/main.cpp(46) main()
+List[0x7ffefde1fcf0] called from src/main.cpp(46) main()
 List condition - EVERYTHING_FINE[0]
 {
     length = 7
@@ -15,14 +15,14 @@ List condition - EVERYTHING_FINE[0]
     *[6] = 30
 
     data[0x606000000020]
-    *[0] = nan
+     [0] = POISON
     *[1] = 10
     *[2] = 30
     *[3] = 20
     *[4] = 15
     *[5] = 13
     *[6] = 5
-    *[7] = nan
+     [7] = POISON
 
     prev[0x6060000000e0]
     *[0] = 2

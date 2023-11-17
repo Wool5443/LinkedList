@@ -59,15 +59,15 @@ We can validate list.
 ErrorCode listError = list.Verify();
 ```
 
-We can also dump our list in text or graphics.
+We can also dump our list in text and graphics.
 
 ```c++
-DumpList(&list, list.Verify(), "textDump.txt", "graphDumpt.dot");
+DumpList(&list, list.Verify());
 ```
 
 [beforeUntangle.txt](examples/beforeUntangle.txt)
 ```txt
-List[0x7ffcd5832b30] called from src/main.cpp(73) main()
+List[0x7ffee8e83460] called from src/main.cpp(137) main()
 List condition - EVERYTHING_FINE[0]
 {
     length = 8
@@ -85,8 +85,8 @@ List condition - EVERYTHING_FINE[0]
     *[7] = 3
 
     data[0x60c000000040]
-    *[0] = nan
-    *[1] = nan
+     [0] = POISON
+     [1] = POISON
     *[2] = 1
     *[3] = 2
     *[4] = 3
@@ -94,13 +94,13 @@ List condition - EVERYTHING_FINE[0]
     *[6] = 0.75
     *[7] = 1.5
     *[8] = -1
-    *[9] = nan
-    *[10] = nan
-    *[11] = nan
-    *[12] = nan
-    *[13] = nan
-    *[14] = nan
-    *[15] = nan
+     [9] = POISON
+     [10] = POISON
+     [11] = POISON
+     [12] = POISON
+     [13] = POISON
+     [14] = POISON
+     [15] = POISON
 
     prev[0x60c000000100]
     *[0] = 4
@@ -140,13 +140,13 @@ List condition - EVERYTHING_FINE[0]
 }
 ```
 
-Here not nonexistent nodes are nan in data, FREE in prev. next is a single linked list of free nodes used for adding new elements.
+Here not nonexistent nodes are POISON in data, FREE in prev. next is a single linked list of free nodes used for adding new elements.
 
 You can see elements in data are not in order. We can fix this by calling ReallocDownWithUntangle().
 
 [afterUntangle.txt](examples/afterUntangle.txt)
 ```txt
-List[0x7ffcd5832b30] called from src/main.cpp(77) main()
+List[0x7ffee8e83460] called from src/main.cpp(141) main()
 List condition - EVERYTHING_FINE[0]
 {
     length = 8
@@ -164,7 +164,7 @@ List condition - EVERYTHING_FINE[0]
     *[7] = 3
 
     data[0x606000000140]
-    *[0] = nan
+     [0] = POISON
     *[1] = -1
     *[2] = 0.5
     *[3] = 0.75
@@ -195,10 +195,6 @@ List condition - EVERYTHING_FINE[0]
 }
 ```
 
-Graph dumps are in [images](images/). Example ones are in [examples](examples/).
+Graph dumps are in [img](log/img). Example ones are in [examples](examples/).
 
-You can use dot to draw your own graph dumps.
-```bash
-make draw
-```
-It draws all dot files in [dots](dots/).
+It draws all dot files in [dot](log/dot).
