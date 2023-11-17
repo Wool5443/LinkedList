@@ -6,6 +6,7 @@
 int main()
 {
     StartHtmlLogging();
+    
     LinkedList list = {};
     ErrorCode listError = list.Init();
     MyAssertSoft(!listError, listError);
