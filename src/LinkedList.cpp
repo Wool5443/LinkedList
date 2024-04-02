@@ -1,4 +1,5 @@
 #include <string.h>
+#include <assert.h>
 #include "PrettyDumpList.hpp"
 #include "LinkedList.hpp"
 #include "MinMax.hpp"
