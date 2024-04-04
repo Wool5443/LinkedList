@@ -4,6 +4,10 @@
 #include "LinkedList.hpp"
 #include "MinMax.hpp"
 
+#ifdef NDEBUG
+#define ERR_DUMP_RET(...)
+#define ERR_DUMP_RET_RES(...)
+#else
 #define ERR_DUMP_RET(listPtr, error)                                    \
 {                                                                       \
     ErrorCode _error = error;                                           \
@@ -23,6 +27,7 @@
         return { value, _error };                                       \
     }                                                                   \
 }
+#endif
 
 ErrorCode _listReallocUp(LinkedList* list);
 
@@ -31,13 +36,13 @@ ErrorCode LinkedList::Init()
     *this = {};
 
     ListElement_t* dataTemp = (ListElement_t*)calloc(DEFAULT_LIST_CAPACITY, sizeof(*dataTemp));
-    MyAssertSoft(dataTemp, ERROR_NO_MEMORY);
+    if (!dataTemp) return ERROR_NO_MEMORY;
 
     size_t* nextTemp = (size_t*)calloc(DEFAULT_LIST_CAPACITY, sizeof(*nextTemp));
-    MyAssertSoft(nextTemp, ERROR_NO_MEMORY);
+    if (!nextTemp) return ERROR_NO_MEMORY;
 
     size_t* prevTemp = (size_t*)calloc(DEFAULT_LIST_CAPACITY, sizeof(*prevTemp));
-    MyAssertSoft(prevTemp, ERROR_NO_MEMORY);
+    if (!prevTemp) return ERROR_NO_MEMORY;
 
     for (size_t i = 0; i < DEFAULT_LIST_CAPACITY; i++)
         dataTemp[i] = LIST_POISON;
@@ -94,8 +99,8 @@ ErrorCode LinkedList::Verify()
 
 ErrorCode LinkedList::InsertAfter(ListElement_t value, size_t index)
 {
-    MyAssertSoft(index < this->capacity, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoft(this->prev[index] != FREE_ELEM, ERROR_INDEX_OUT_OF_BOUNDS);
+    if (index >= this->capacity) return ERROR_INDEX_OUT_OF_BOUNDS;
+    if (this->prev[index] == FREE_ELEM) return ERROR_INDEX_OUT_OF_BOUNDS;
 
     ERR_DUMP_RET(this, this->Verify());
 
@@ -133,8 +138,8 @@ ErrorCode LinkedList::PushFront(ListElement_t value)
 
 ListElemResult LinkedList::Pop(size_t index)
 {
-    MyAssertSoftResult(1 <= index && index < this->capacity, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
-    MyAssertSoftResult(this->prev[index] != FREE_ELEM, LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS);
+    if (index < 1 || index >= this->capacity) return { LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
+    if (this->prev[index] == FREE_ELEM) return { LIST_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
 
     ERR_DUMP_RET_RES(this, this->Verify(), LIST_POISON);
 
@@ -159,19 +164,21 @@ ListElemResult LinkedList::Pop()
 
 ErrorCode _listReallocUp(LinkedList* list)
 {
+    MyAssertSoft(list, ERROR_NULLPTR);
+
     if (list->freeHead)
         return EVERYTHING_FINE;
 
     size_t newCapacity = list->capacity * LIST_GROW_FACTOR;
 
     ListElement_t* newData = (ListElement_t*)realloc(list->data, newCapacity * sizeof(*newData));
-    MyAssertSoft(newData, ERROR_NO_MEMORY);
+    if (!newData) return { ERROR_NO_MEMORY };
 
     size_t* newPrev = (size_t*)realloc(list->prev, newCapacity * sizeof(*newPrev));
-    MyAssertSoft(newPrev, ERROR_NO_MEMORY);
+    if (!newPrev) return { ERROR_NO_MEMORY };
 
     size_t* newNext = (size_t*)realloc(list->next, newCapacity * sizeof(*newNext));
-    MyAssertSoft(newNext, ERROR_NO_MEMORY);
+    if (!newNext) return { ERROR_NO_MEMORY };
 
     for (size_t i = list->capacity; i < newCapacity - 1; i++)
         newNext[i] = i + 1;
@@ -201,13 +208,13 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     size_t newCapacity = max(DEFAULT_LIST_CAPACITY, this->length);
 
     ListElement_t* newData = (ListElement_t*)calloc(newCapacity, sizeof(*newData));
-    MyAssertSoft(newData, ERROR_NO_MEMORY);
+    if (!newData) return { ERROR_NO_MEMORY };
 
     size_t* newPrev = (size_t*)calloc(newCapacity, sizeof(*newPrev));
-    MyAssertSoft(newPrev, ERROR_NO_MEMORY);
+    if (!newPrev) return { ERROR_NO_MEMORY };
 
     size_t* newNext = (size_t*)calloc(newCapacity, sizeof(*newNext));
-    MyAssertSoft(newNext, ERROR_NO_MEMORY);
+    if (!newNext) return { ERROR_NO_MEMORY };
 
     for (size_t i = 0; i < newCapacity; i++)
         newData[i] = LIST_POISON;
@@ -255,16 +262,17 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     return EVERYTHING_FINE;
 }
 
-ListElemIndexResult LinkedList::FindElement(size_t number)
+ListElemIndexResult LinkedList::FindElement(size_t index)
 {
-    MyAssertSoftResult(0 < number && number < this->capacity, 0, ERROR_INDEX_OUT_OF_BOUNDS);
+    if (index < 1 || index >= this->capacity) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
+    if (this->prev[index] == FREE_ELEM) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
 
     ERR_DUMP_RET_RES(this, this->Verify(), 0);
     
     size_t curEl = *this->head;
     size_t i = 1;
 
-    while (i < number && curEl)
+    while (i < index && curEl)
     {
         curEl = this->next[curEl];
         i++;

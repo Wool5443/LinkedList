@@ -109,10 +109,10 @@ struct LinkedList
     /**
      * @brief Finds the element which is nth in order.
      * 
-     * @param number 
+     * @param [in] index 
      * @return ListElemIndexResult 
      */
-    ListElemIndexResult FindElement(size_t number);  
+    ListElemIndexResult FindElement(size_t index);  
 };
 
 #endif

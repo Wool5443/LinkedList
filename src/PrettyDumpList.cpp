@@ -41,6 +41,9 @@ ErrorCode EndHtmlLogging()
 
 ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller)
 {
+    MyAssertHard(list,   ERROR_NULLPTR);
+    MyAssertHard(caller, ERROR_NULLPTR);
+
     char outTextPath[MAX_LEN_PATH] = "";
     sprintf(outTextPath, "log/txt/iter%zu.txt", DUMP_ITER);
 
@@ -73,16 +76,15 @@ ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* calle
 
 ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* caller, const char* outTextPath)
 {
-    MyAssertSoft(list, ERROR_NULLPTR);
-
+    MyAssertSoft(list,        ERROR_NULLPTR);
     MyAssertSoft(outTextPath, ERROR_BAD_FILE);
 
     FILE* outTextFile = fopen(outTextPath, "w");
     MyAssertSoft(outTextFile, ERROR_BAD_FILE);
 
     PRINT_LOG("List[%p] called from %s(%zu) %s()\n", list, caller->fileName,
-                                                                       caller->line,
-                                                                       caller->name);
+                                                           caller->line,
+                                                           caller->name);
     PRINT_LOG("List condition - %s[%d]\n", ERROR_CODE_NAMES[error], error);
 
     PRINT_LOG("{\n");
@@ -147,6 +149,7 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
 {
+    MyAssertSoft(list,         ERROR_BAD_FILE);
     MyAssertSoft(outGraphPath, ERROR_BAD_FILE);
 
     FILE* outGraphFile = fopen(outGraphPath, "w");
