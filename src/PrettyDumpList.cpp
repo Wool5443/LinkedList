@@ -11,7 +11,10 @@
 #define ROOT_COLOR "\"#c95b90\""
 #define FREE_HEAD_COLOR "\"#b9e793\""
 
-static const size_t MAX_LEN_PATH    = 128;
+static size_t DUMP_ITER = 0;
+static FILE*  HTML_FILE = NULL;
+
+static const size_t MAX_LEN_PATH    = 256;
 static const size_t MAX_COMMAND_LEN = 512;
 
 #define PRINT_LOG(...)                                                          \
@@ -22,10 +25,13 @@ do                                                                              
         fprintf(HTML_FILE, __VA_ARGS__);                                        \
 } while (0)             
 
-ErrorCode StartHtmlLogging()
+ErrorCode StartHtmlLogging(const char* logFolder)
 {
-    HTML_FILE = fopen(DEFAULT_HTML_LOG, "w");
-    MyAssertSoft(HTML_FILE, ERROR_BAD_FILE);
+    char htmlLogPath[MAX_LEN_PATH] = "";
+    sprintf(htmlLogPath, "%s/log.html", logFolder);
+
+    HTML_FILE = fopen(htmlLogPath, "w");
+    if (!HTML_FILE) return ERROR_BAD_FILE;
 
     return EVERYTHING_FINE;
 }
@@ -45,10 +51,10 @@ ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* calle
     MyAssertHard(caller, ERROR_NULLPTR);
 
     char outTextPath[MAX_LEN_PATH] = "";
-    sprintf(outTextPath, "log/txt/iter%zu.txt", DUMP_ITER);
+    sprintf(outTextPath, "%s/txt/iter%zu.txt", list->logFolder, DUMP_ITER);
 
     char outGraphPath[MAX_LEN_PATH] = "";
-    sprintf(outGraphPath, "log/dot/iter%zu.dot", DUMP_ITER);
+    sprintf(outGraphPath, "%s/dot/iter%zu.dot", list->logFolder, DUMP_ITER);
 
     if (HTML_FILE)
         fprintf(HTML_FILE, "<h1>Iteration %zu</h1>\n<pre>\n", DUMP_ITER);
@@ -61,7 +67,7 @@ ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* calle
     RETURN_ERROR(DumpListGraph(list, outGraphPath));
 
     char outImgPath[MAX_LEN_PATH] = "";
-    sprintf(outImgPath, "log/img/iter%zu.png", DUMP_ITER);
+    sprintf(outImgPath, "%s/img/iter%zu.png", list->logFolder, DUMP_ITER);
     
     char command[MAX_COMMAND_LEN] = "";
     sprintf(command, "dot %s -T png -o %s", outGraphPath, outImgPath);
@@ -149,11 +155,11 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
 {
-    MyAssertSoft(list,         ERROR_BAD_FILE);
-    MyAssertSoft(outGraphPath, ERROR_BAD_FILE);
+    if (!list)         return ERROR_NULLPTR;
+    if (!outGraphPath) return ERROR_NULLPTR;
 
     FILE* outGraphFile = fopen(outGraphPath, "w");
-    MyAssertSoft(outGraphFile, ERROR_BAD_FILE);
+    if (!outGraphFile) return ERROR_BAD_FILE;
 
     fprintf(outGraphFile, 
     "digraph\n"

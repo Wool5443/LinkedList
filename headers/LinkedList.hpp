@@ -34,12 +34,16 @@ struct LinkedList
 
     size_t         freeHead;
 
+    const char*    logFolder;
+
     /**
      * @brief Initializes an empty list with default capacity.
      * 
+     * @param [in] logFolder - where to put logs.
+     * 
      * @return error which can happen during allocation.
      */
-    ErrorCode Init();
+    ErrorCode Init(const char* logFolder);
     /**
      * @brief Destroys a list setting all fields to poisons.
      * 

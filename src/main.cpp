@@ -5,10 +5,12 @@
 
 int main()
 {
-    StartHtmlLogging();
+    const char* logFolder = "/home/twenty/Programming/LinkedList/log";
+
+    StartHtmlLogging(logFolder);
     
     LinkedList list = {};
-    ErrorCode listError = list.Init();
+    ErrorCode listError = list.Init(logFolder);
     MyAssertSoft(!listError, listError);
 
     size_t n = 3;

@@ -4,9 +4,6 @@
 #include "Utils.hpp"
 #include "LinkedList.hpp"
 
-static size_t DUMP_ITER = 0;
-static FILE* HTML_FILE = NULL;
-
 ErrorCode _dumpList(LinkedList* list, ErrorCode error, SourceCodePosition* caller);
 #define DumpList(listPtr, error)                                            \
 ({                                                                          \
@@ -25,7 +22,7 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
 
 ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath);
 
-ErrorCode StartHtmlLogging();
+ErrorCode StartHtmlLogging(const char* logFolder);
 
 ErrorCode EndHtmlLogging();
 

@@ -31,7 +31,7 @@
 
 ErrorCode _listReallocUp(LinkedList* list);
 
-ErrorCode LinkedList::Init()
+ErrorCode LinkedList::Init(const char* logFolder)
 {
     *this = {};
 
@@ -53,16 +53,18 @@ ErrorCode LinkedList::Init()
     for (size_t i = 1; i < DEFAULT_LIST_CAPACITY; i++)
         prevTemp[i] = FREE_ELEM;
 
-    this->data     = dataTemp;
-    this->next     = nextTemp;
-    this->prev     = prevTemp;
+    this->data      = dataTemp;
+    this->next      = nextTemp;
+    this->prev      = prevTemp;
 
-    this->length   = 1;
-    this->capacity = DEFAULT_LIST_CAPACITY;
+    this->length    = 1;
+    this->capacity  = DEFAULT_LIST_CAPACITY;
 
-    this->head     = &nextTemp[0];
-    this->tail     = &prevTemp[0];
-    this->freeHead = 1;
+    this->head      = &nextTemp[0];
+    this->tail      = &prevTemp[0];
+    this->freeHead  = 1;
+
+    this->logFolder = logFolder;
 
     return EVERYTHING_FINE;
 }
