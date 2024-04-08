@@ -86,7 +86,7 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
     MyAssertSoft(outTextPath, ERROR_BAD_FILE);
 
     FILE* outTextFile = fopen(outTextPath, "w");
-    MyAssertSoft(outTextFile, ERROR_BAD_FILE);
+    if (!outTextFile) return ERROR_BAD_FILE;
 
     PRINT_LOG("List[%p] called from %s(%zu) %s()\n", list, caller->fileName,
                                                            caller->line,
