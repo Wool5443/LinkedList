@@ -15,7 +15,7 @@ static size_t DUMP_ITER = 0;
 static FILE*  HTML_FILE = NULL;
 
 static const size_t MAX_LEN_PATH    = 256;
-static const size_t MAX_COMMAND_LEN = 512;
+static const size_t MAX_COMMAND_LEN = 640;
 
 #define PRINT_LOG(...)                                                          \
 do                                                                              \
