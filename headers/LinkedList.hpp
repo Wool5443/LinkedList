@@ -12,12 +12,12 @@ static const size_t FREE_ELEM = (size_t)-1;
 struct ListElemResult
 {
     ListElement_t value;
-    ErrorCode error;
+    ErrorCode     error;
 };
 
 struct ListElemIndexResult
 {
-    size_t value;
+    size_t    value;
     ErrorCode error;
 };
 
@@ -114,9 +114,17 @@ struct LinkedList
      * @brief Finds the element which is nth in order.
      * 
      * @param [in] index 
-     * @return ListElemIndexResult 
+     * @return ListElemResult 
      */
-    ListElemIndexResult FindElement(size_t index);  
+    ListElemIndexResult GetByIndex(size_t index);
+
+    /**
+     * @brief finds the value in the list
+     * 
+     * @param [in] value
+     * @return ListElemResult with a pointer to the value 
+     */
+    ListElemIndexResult Find(ListElement_t value);
 };
 
 #endif

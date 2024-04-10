@@ -264,10 +264,10 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     return EVERYTHING_FINE;
 }
 
-ListElemIndexResult LinkedList::FindElement(size_t index)
+ListElemIndexResult LinkedList::GetByIndex(size_t index)
 {
     if (index < 1 || index >= this->capacity) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
-    if (this->prev[index] == FREE_ELEM) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
+    if (this->prev[index] == FREE_ELEM)       return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
 
     ERR_DUMP_RET_RES(this, this->Verify(), 0);
     
@@ -275,6 +275,22 @@ ListElemIndexResult LinkedList::FindElement(size_t index)
     size_t i = 1;
 
     while (i < index && curEl)
+    {
+        curEl = this->next[curEl];
+        i++;
+    }
+
+    return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
+}
+
+ListElemIndexResult LinkedList::Find(ListElement_t value)
+{
+    ERR_DUMP_RET_RES(this, this->Verify(), 0);
+    
+    size_t curEl = *this->head;
+    size_t i = 1;
+
+    while (i <= this->length && curEl && strncmp(this->data[i].key, value.key, this->data[i].count))
     {
         curEl = this->next[curEl];
         i++;
