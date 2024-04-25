@@ -3,7 +3,7 @@
 #include "PrettyDumpList.hpp"
 #include "LinkedList.hpp"
 #include "MinMax.hpp"
-#include "StrcmpAVX512.hpp"
+#include "StrcmpAVX.hpp"
 
 #ifdef NDEBUG
 #define ERR_DUMP_RET(...)
@@ -291,7 +291,7 @@ ListElemIndexResult LinkedList::Find(ListElement_t value)
     size_t curEl = *this->head;
     size_t i = 1;
 
-    while (i <= this->length && curEl && !StrcmpAVX512(this->data[i].key.buf, value.key.buf))
+    while (i <= this->length && curEl && !StrcmpAVX(this->data[i].key.buf, value.key.buf))
     {
         curEl = this->next[curEl];
         i++;
