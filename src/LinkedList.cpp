@@ -289,13 +289,9 @@ ListElemIndexResult LinkedList::Find(ListElement_t value)
     ERR_DUMP_RET_RES(this, this->Verify(), 0);
     
     size_t curEl = *this->head;
-    size_t i = 1;
 
-    while (i <= this->length && curEl && !StrcmpAVX(this->data[i].key.buf, value.key.buf))
-    {
+    while (curEl && !StrcmpAVX(this->data[curEl].key.buf, value.key.buf))
         curEl = this->next[curEl];
-        i++;
-    }
 
     return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
 }
