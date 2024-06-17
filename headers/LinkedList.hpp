@@ -5,7 +5,7 @@
 #include <math.h>
 #include "Utils.hpp"
 
-#include "ListSettings.ini"
+#include "ListSettings.hpp"
 
 static const size_t FREE_ELEM = (size_t)-1;
 
