@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ListSettings.ini"
+#include "ListSettings.hpp"
 #include "PrettyDumpList.hpp"
 
 #define FONT_SIZE "10"
