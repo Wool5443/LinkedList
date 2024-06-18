@@ -12,8 +12,10 @@ enum SymbolType
 
 struct SymbolTableEntry
 {
-    String*    entry;
-    SymbolType type;
+    const String entry;
+    SymbolType   type;
+
+    ErrorCode Create();
 };
 
 constexpr size_t DEFAULT_LIST_CAPACITY = 8;
