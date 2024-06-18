@@ -1,5 +1,4 @@
-#ifndef LINKED_LIST_HPP
-#define LINKED_LIST_HPP
+#pragma once
 
 #include <stddef.h>
 #include <math.h>
@@ -116,7 +115,13 @@ struct LinkedList
      * @param [in] index 
      * @return ListElemIndexResult 
      */
-    ListElemIndexResult FindElement(size_t index);  
-};
+    ListElemIndexResult GetByIndex(size_t index);  
 
-#endif
+    /**
+     * @brief finds the value in the list
+     * 
+     * @param [in] value
+     * @return ListElemResult with a pointer to the value 
+     */
+    ListElemIndexResult Find(const ListElement_t& value);
+};
