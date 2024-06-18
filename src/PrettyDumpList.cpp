@@ -17,6 +17,8 @@ static FILE*  HTML_FILE = NULL;
 static const size_t MAX_LEN_PATH    = 256;
 static const size_t MAX_COMMAND_LEN = 640;
 
+static ErrorCode _printListElement(FILE* file, ListElement_t* listEl);
+
 #define PRINT_LOG(...)                                                          \
 do                                                                              \
 {                                                                               \
@@ -41,6 +43,29 @@ ErrorCode EndHtmlLogging()
     if (HTML_FILE)
         fclose(HTML_FILE);
     HTML_FILE = NULL;
+
+    return EVERYTHING_FINE;
+}
+
+static ErrorCode _printListElement(FILE* file, ListElement_t* listEl)
+{
+    MyAssertSoft(file, ERROR_BAD_FILE);
+    MyAssertSoft(listEl, ERROR_NULLPTR);
+
+    switch (listEl->type)
+    {
+        case VARIABLE_SYMBOL:
+            fprintf(file, "var %s = %lg\n", listEl->name.buf, listEl->value);
+            break;
+        case CONST_SYMBOL:
+            fprintf(file, "cont %s = %lg\n", listEl->name.buf, listEl->value);
+            break;
+        case FUNCTION_SYMBOL:
+            fprintf(file, "function %s = %p\n", listEl->name.buf, listEl->function);
+            break;
+        default:
+            return ERROR_BAD_VALUE;
+    }
 
     return EVERYTHING_FINE;
 }
@@ -105,11 +130,8 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
         size_t orderNum = 1;
         while (curEl != 0 && orderNum <= list->length * 2)
         {
-            PRINT_LOG("%4s", "");
-            if (list->data[curEl] == LIST_POISON || !isfinite((double)list->data[curEl]))
-                PRINT_LOG(" [%zu] = POISON\n", orderNum);
-            else
-                PRINT_LOG("*[%zu] = " LIST_EL_SPECIFIER "\n", orderNum, list->data[curEl]);
+            PRINT_LOG("%4s [%zu] = ", "", curEl);
+            RETURN_ERROR(_printListElement(outTextFile, &list->data[curEl]));
 
             curEl = list->next[curEl];
             orderNum++;
@@ -119,11 +141,8 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
     PRINT_LOG("\n%3s data[%p]\n", "", list->data);
     for (size_t i = 0; i < list->capacity; i++)
     {
-        PRINT_LOG("%4s", "");
-        if (list->data[i] == LIST_POISON || !isfinite((double)list->data[i]))
-            PRINT_LOG(" [%zu] = POISON\n", i);
-        else
-            PRINT_LOG("*[%zu] = " LIST_EL_SPECIFIER "\n", i, list->data[i]);
+        PRINT_LOG("%4s [%zu] = ", "", i);
+        RETURN_ERROR(_printListElement(outTextFile, &list->data[i]));
     }
 
     PRINT_LOG("\n%3s prev[%p]\n", "", list->prev);
@@ -182,10 +201,8 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
         "CELL_%zu[style = \"filled\", fillcolor = " NODE_COLOR ", ", i);
         fprintf(outGraphFile, "label = \"index = %zu|", i);
 
-        if (list->data[i] == LIST_POISON || !isfinite((double)list->data[i]))
-            fprintf(outGraphFile, "value\\nPOISON|");
-        else
-            fprintf(outGraphFile, "value\\n" LIST_EL_SPECIFIER "|", list->data[i]);
+        fprintf(outGraphFile, "%4s [%zu] = ", "", i);
+        RETURN_ERROR(_printListElement(outGraphFile, &list->data[i]));
 
         if (list->prev[i] == FREE_ELEM)
             fprintf(outGraphFile, "{prev = FREE|");

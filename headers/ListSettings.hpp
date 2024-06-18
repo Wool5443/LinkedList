@@ -14,7 +14,7 @@ enum SymbolType
 
 struct SymbolTableEntry
 {
-    const String entry;
+    String name;
     SymbolType   type;
 
     union
@@ -23,12 +23,12 @@ struct SymbolTableEntry
         function_t function;
     };
 
-    ErrorCode Create();
+    ErrorCode Create(String* name, SymbolType type);
 };
 
 constexpr size_t DEFAULT_LIST_CAPACITY = 8;
 constexpr size_t LIST_GROW_FACTOR      = 2;
 
-typedef double ListElement_t;
+typedef SymbolTableEntry ListElement_t;
 constexpr ListElement_t LIST_POISON = {};
-#define LIST_EL_SPECIFIER "%lg"
+#define LIST_EL_SPECIFIER ""
