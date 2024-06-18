@@ -55,13 +55,13 @@ static ErrorCode _printListElement(FILE* file, ListElement_t* listEl)
     switch (listEl->type)
     {
         case VARIABLE_SYMBOL:
-            fprintf(file, "var %s = %lg\n", listEl->name.buf, listEl->value);
+            fprintf(file, "var %s = %lg", listEl->name.buf, listEl->value);
             break;
         case CONST_SYMBOL:
-            fprintf(file, "cont %s = %lg\n", listEl->name.buf, listEl->value);
+            fprintf(file, "cont %s = %lg", listEl->name.buf, listEl->value);
             break;
         case FUNCTION_SYMBOL:
-            fprintf(file, "function %s = %p\n", listEl->name.buf, listEl->function);
+            fprintf(file, "function %s = %p", listEl->name.buf, listEl->function);
             break;
         default:
             return ERROR_BAD_VALUE;
@@ -132,6 +132,7 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
         {
             PRINT_LOG("%4s [%zu] = ", "", curEl);
             RETURN_ERROR(_printListElement(outTextFile, &list->data[curEl]));
+            fputc('\n', outTextFile);
 
             curEl = list->next[curEl];
             orderNum++;
@@ -143,6 +144,7 @@ ErrorCode _dumpListText(LinkedList* list, ErrorCode error, SourceCodePosition* c
     {
         PRINT_LOG("%4s [%zu] = ", "", i);
         RETURN_ERROR(_printListElement(outTextFile, &list->data[i]));
+        fputc('\n', outTextFile);
     }
 
     PRINT_LOG("\n%3s prev[%p]\n", "", list->prev);
@@ -201,8 +203,9 @@ ErrorCode DumpListGraph(LinkedList* list, const char* outGraphPath)
         "CELL_%zu[style = \"filled\", fillcolor = " NODE_COLOR ", ", i);
         fprintf(outGraphFile, "label = \"index = %zu|", i);
 
-        fprintf(outGraphFile, "%4s [%zu] = ", "", i);
+        fprintf(outGraphFile, "value\\n");
         RETURN_ERROR(_printListElement(outGraphFile, &list->data[i]));
+        fputc('|', outGraphFile);
 
         if (list->prev[i] == FREE_ELEM)
             fprintf(outGraphFile, "{prev = FREE|");

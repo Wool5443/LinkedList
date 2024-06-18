@@ -297,7 +297,7 @@ ListElemIndexResult LinkedList::Find(const ListElement_t& value)
 
     size_t curEl = *this->head;
 
-    while (curEl && strcmp(this->data->name.buf, value.name.buf))
+    while (curEl && strcmp(this->data[curEl].name.buf, value.name.buf))
         curEl = this->next[curEl];
 
     return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
