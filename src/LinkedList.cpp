@@ -73,6 +73,14 @@ ErrorCode LinkedList::Destructor()
 {
     ERR_DUMP_RET(this, this->Verify());
 
+    size_t curEl = *this->head;
+
+    while (curEl)
+    {
+        this->data[curEl].name.Destructor();
+        curEl = this->next[curEl];
+    }
+
     free(this->data);
     free(this->next);
     free(this->prev);
