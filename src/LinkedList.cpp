@@ -264,7 +264,7 @@ ErrorCode LinkedList::ReallocDownAndUntangle()
     return EVERYTHING_FINE;
 }
 
-ListElemIndexResult LinkedList::FindElement(size_t index)
+ListElemIndexResult LinkedList::GetByIndex(size_t index)
 {
     if (index < 1 || index >= this->capacity) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };
     if (this->prev[index] == FREE_ELEM) return { SIZET_POISON, ERROR_INDEX_OUT_OF_BOUNDS };

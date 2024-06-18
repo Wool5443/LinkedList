@@ -116,7 +116,7 @@ struct LinkedList
      * @param [in] index 
      * @return ListElemIndexResult 
      */
-    ListElemIndexResult FindElement(size_t index);  
+    ListElemIndexResult GetByIndex(size_t index);  
 };
 
 #endif
