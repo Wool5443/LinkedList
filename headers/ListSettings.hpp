@@ -3,6 +3,8 @@
 #include <math.h>
 #include "String.hpp"
 
+typedef void* (*function_t)(void* arg);
+
 enum SymbolType
 {
     VARIABLE_SYMBOL,
@@ -14,6 +16,12 @@ struct SymbolTableEntry
 {
     const String entry;
     SymbolType   type;
+
+    union
+    {
+        double     value;
+        function_t function;
+    };
 
     ErrorCode Create();
 };
