@@ -7,6 +7,7 @@ typedef void* (*function_t)(void* arg);
 
 enum SymbolType
 {
+    ANY_SYMBOL = 0,
     VARIABLE_SYMBOL,
     CONST_SYMBOL,
     FUNCTION_SYMBOL,

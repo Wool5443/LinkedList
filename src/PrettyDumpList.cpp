@@ -64,7 +64,7 @@ static ErrorCode _printListElement(FILE* file, ListElement_t* listEl)
             fprintf(file, "function %s = %p", listEl->name.buf, listEl->function);
             break;
         default:
-            return ERROR_BAD_VALUE;
+            return EVERYTHING_FINE;
     }
 
     return EVERYTHING_FINE;
