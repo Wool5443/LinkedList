@@ -24,6 +24,7 @@ struct SymbolTableEntry
     };
 
     ErrorCode Create(String* name, SymbolType type);
+    void      Destructor();
 };
 
 constexpr size_t DEFAULT_LIST_CAPACITY = 8;

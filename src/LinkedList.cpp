@@ -77,7 +77,7 @@ ErrorCode LinkedList::Destructor()
 
     while (curEl)
     {
-        this->data[curEl].name.Destructor();
+        this->data[curEl].Destructor();
         curEl = this->next[curEl];
     }
 
