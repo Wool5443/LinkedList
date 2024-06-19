@@ -111,7 +111,6 @@ struct LinkedList
      * @param [in] index 
      * @return ListElemIndexResult
      */
-<<<<<<< HEAD
     ListElemIndexResult GetByIndex(size_t index);  
 
     /**
@@ -120,8 +119,7 @@ struct LinkedList
      * @param [in] value
      * @return ListElemResult with a pointer to the value 
      */
-    ListElemIndexResult Find(const ListElement_t& value);
-=======
+    ListElemIndexResult Find(const ListElement_t& value) const noexcept;
     ListElemIndexResult GetByIndex(size_t index) const noexcept;
 
     Error StartLogging(const char* logFolder) noexcept;
@@ -129,5 +127,4 @@ struct LinkedList
 
     Error Dump() const noexcept;
     Error Dump(const Error& error) const noexcept;
->>>>>>> New-Error-System
 };
