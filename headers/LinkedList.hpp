@@ -1,5 +1,4 @@
-#ifndef LINKED_LIST_HPP
-#define LINKED_LIST_HPP
+#pragma once
 
 #include <stddef.h>
 #include <math.h>
@@ -12,13 +11,13 @@ static const size_t FREE_ELEM = (size_t)-1;
 struct ListElemResult
 {
     ListElement_t value;
-    ErrorCode error;
+    Error error;
 };
 
 struct ListElemIndexResult
 {
     size_t value;
-    ErrorCode error;
+    Error error;
 };
 
 struct LinkedList
@@ -34,89 +33,89 @@ struct LinkedList
 
     size_t         freeHead;
 
-    const char*    logFolder;
-
     /**
-     * @brief Initializes an empty list with default capacity.
+     * @brief Initializes an empty list with default capacity
      * 
-     * @param [in] logFolder - where to put logs.
-     * 
-     * @return error which can happen during allocation.
+     * @return error which can happen during allocation
      */
-    ErrorCode Init(const char* logFolder);
+    Error Init() noexcept;
     /**
-     * @brief Destroys a list setting all fields to poisons.
+     * @brief Destroys a list setting all fields to poisons
      * 
-     * @return error if list is not valid.
+     * @return error if list is not valid
      */
-    ErrorCode Destructor();
+    Error Destructor() noexcept;
     /**
-     * @brief Checks the list for bad fields.
+     * @brief Checks the list for bad fields
      * 
-     * @return list error.
+     * @return list error
      */
-    ErrorCode Verify();
+    Error Verify() const noexcept;
 
     /**
      * @brief Inserts a value after a list element. May realloc. O(1)
      * 
-     * @param value - what to insert.
-     * @param index - raw index in list. Not order.
+     * @param value - what to insert
+     * @param index - raw index in list. Not order
      * @return error. 
      */
-    ErrorCode InsertAfter(ListElement_t value, size_t index);
+    Error InsertAfter(ListElement_t value, size_t index) noexcept;
     /**
      * @brief Inserts a value before a list element. May realloc. O(1)
      * 
-     * @param value - what to insert.
-     * @param index - raw index in list. Not in logical order.
+     * @param value - what to insert
+     * @param index - raw index in list. Not in logical order
      * @return error. 
      */
-    ErrorCode InsertBefore(ListElement_t value, size_t index);
+    Error InsertBefore(ListElement_t value, size_t index) noexcept;
 
     /**
      * @brief Pushes a value in the end. May realloc. O(1)
      * 
-     * @param value - what to push.
-     * @return error. 
+     * @param value - what to push
+     * @return error
      */
-    ErrorCode PushBack(ListElement_t value);
+    Error PushBack(ListElement_t value) noexcept;
     /**
      * @brief Pushes a value in the start. May realloc. O(1)
      * 
-     * @param value - what to push.
-     * @return error. 
+     * @param value - what to push
+     * @return error
      */
-    ErrorCode PushFront(ListElement_t value);
+    Error PushFront(ListElement_t value) noexcept;
 
     /**
-     * @brief Pops element at index and returns its value.
+     * @brief Pops element at index and returns its value
      * 
-     * @param index - which element to pop. Not order.
-     * @return ListElemResult containing value and error.
+     * @param index - which element to pop. Not order
+     * @return ListElemResult containing value and error
      */
-    ListElemResult Pop(size_t index);
+    ListElemResult Pop(size_t index) noexcept;
     /**
-     * @brief Pops last element and returns its value.
+     * @brief Pops last element and returns its value
      * 
-     * @return ListElemResult containing value and error.
+     * @return ListElemResult containing value and error
      */
-    ListElemResult Pop();
+    ListElemResult Pop() noexcept;
 
     /**
-     * @brief Reallocs the list to its length and untangles it.
+     * @brief Reallocs the list to its length and untangles it
      * 
-     * @return error.
+     * @return error
      */
-    ErrorCode ReallocDownAndUntangle();
+    Error ReallocDownAndUntangle() noexcept;
 
     /**
-     * @brief Finds the element which is nth in order.
+     * @brief Finds the element which is nth in order
      * 
      * @param [in] index 
-     * @return ListElemIndexResult 
+     * @return ListElemIndexResult
      */
-    ListElemIndexResult GetByIndex(size_t index);  
-};
+    ListElemIndexResult GetByIndex(size_t index) const noexcept;
 
-#endif
+    Error StartLogging(const char* logFolder) noexcept;
+    Error EndLogging() noexcept;
+
+    Error Dump() const noexcept;
+    Error Dump(const Error& error) const noexcept;
+};
