@@ -29,9 +29,10 @@ do                                          \
 } while(0)
 #endif
 
-Error _dumpListText(const LinkedList* list, const Error& error, const char* outTextPath);
-Error _dumpListGraph(const LinkedList* list, const char* outGraphPath);
-Error _listReallocUp(LinkedList* list);
+static Error _printListElement(FILE* file, ListElement_t* listEl);
+static Error _dumpListText(const LinkedList* list, const Error& error, const char* outTextPath);
+static Error _dumpListGraph(const LinkedList* list, const char* outGraphPath);
+static Error _listReallocUp(LinkedList* list);
 
 Error LinkedList::Init() noexcept
 {
@@ -311,7 +312,30 @@ do                                                                              
     fprintf(outTextFile, __VA_ARGS__);                                          \
     if (HTML_FILE)                                                              \
         fprintf(HTML_FILE, __VA_ARGS__);                                        \
-} while (0)             
+} while (0)
+
+static Error _printListElement(FILE* file, ListElement_t* listEl)
+{
+    SoftAssert(file, ERROR_BAD_FILE);
+    SoftAssert(listEl, ERROR_NULLPTR);
+
+    switch (listEl->type)
+    {
+        case VARIABLE_SYMBOL:
+            fprintf(file, "var %s = %lg", listEl->name.buf, listEl->value);
+            break;
+        case CONST_SYMBOL:
+            fprintf(file, "cont %s = %lg", listEl->name.buf, listEl->value);
+            break;
+        case FUNCTION_SYMBOL:
+            fprintf(file, "function %s = %p", listEl->name.buf, listEl->function);
+            break;
+        default:
+            return Error();
+    }
+
+    return Error();
+}
 
 #define FONT_SIZE "10"
 #define FONT_NAME "\"Fira Code Bold\""
@@ -370,7 +394,7 @@ Error _dumpListText(const LinkedList* list, const Error& error, const char* outT
         return CREATE_ERROR(ERROR_BAD_FILE);
 
     PRINT_LOG("List[%p]\n", list);
-    PRINT_LOG("List condition - %s[%d]\n", error.GetErrorName(), error);
+    PRINT_LOG("List condition - %s[%d]\n", error.GetErrorName(), error.code);
 
     PRINT_LOG("{\n");
     PRINT_LOG("%3s length = %zu\n", "",    list->length);
@@ -384,11 +408,9 @@ Error _dumpListText(const LinkedList* list, const Error& error, const char* outT
         size_t orderNum = 1;
         while (curEl != 0 && orderNum <= list->length * 2)
         {
-            PRINT_LOG("%4s", "");
-            if (list->data[curEl] == LIST_POISON || !isfinite((double)list->data[curEl]))
-                PRINT_LOG(" [%zu] = POISON\n", orderNum);
-            else
-                PRINT_LOG("*[%zu] = " LIST_EL_SPECIFIER "\n", orderNum, list->data[curEl]);
+            PRINT_LOG("%4s [%zu] = ", "", curEl);
+            RETURN_ERROR(_printListElement(outTextFile, &list->data[curEl]));
+            fputc('\n', outTextFile);
 
             curEl = list->next[curEl];
             orderNum++;
@@ -398,11 +420,9 @@ Error _dumpListText(const LinkedList* list, const Error& error, const char* outT
     PRINT_LOG("\n%3s data[%p]\n", "", list->data);
     for (size_t i = 0; i < list->capacity; i++)
     {
-        PRINT_LOG("%4s", "");
-        if (list->data[i] == LIST_POISON || !isfinite((double)list->data[i]))
-            PRINT_LOG(" [%zu] = POISON\n", i);
-        else
-            PRINT_LOG("*[%zu] = " LIST_EL_SPECIFIER "\n", i, list->data[i]);
+        PRINT_LOG("%4s [%zu] = ", "", i);
+        RETURN_ERROR(_printListElement(outTextFile, &list->data[i]));
+        fputc('\n', outTextFile);
     }
 
     PRINT_LOG("\n%3s prev[%p]\n", "", list->prev);
@@ -462,10 +482,9 @@ Error _dumpListGraph(const LinkedList* list, const char* outGraphPath)
         "CELL_%zu[style = \"filled\", fillcolor = " NODE_COLOR ", ", i);
         fprintf(outGraphFile, "label = \"index = %zu|", i);
 
-        if (list->data[i] == LIST_POISON || !isfinite((double)list->data[i]))
-            fprintf(outGraphFile, "value\\nPOISON|");
-        else
-            fprintf(outGraphFile, "value\\n" LIST_EL_SPECIFIER "|", list->data[i]);
+        fprintf(outGraphFile, "value\\n");
+        RETURN_ERROR(_printListElement(outGraphFile, &list->data[i]));
+        fputc('|', outGraphFile);
 
         if (list->prev[i] == FREE_ELEM)
             fprintf(outGraphFile, "{prev = FREE|");
@@ -555,26 +574,14 @@ Error LinkedList::EndLogging() noexcept
     return Error();
 }
 
-ListElemIndexResult LinkedList::Find(const ListElement_t& value)
+ListElemIndexResult LinkedList::Find(const ListElement_t& value) const noexcept
 {
-    ERR_DUMP_RET_RES(this, this->Verify(), 0);
+    ERR_DUMP_RET_RES(this, SIZET_POISON);
 
     size_t curEl = *this->head;
 
     while (curEl && strcmp(this->data[curEl].name.buf, value.name.buf))
         curEl = this->next[curEl];
 
-    return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
-}
-
-ListElemIndexResult LinkedList::Find(const ListElement_t& value)
-{
-    ERR_DUMP_RET_RES(this, this->Verify(), 0);
-
-    size_t curEl = *this->head;
-
-    while (curEl && strcmp(this->data[curEl].name.buf, value.name.buf))
-        curEl = this->next[curEl];
-
-    return { curEl, curEl ? EVERYTHING_FINE : ERROR_NOT_FOUND };
+    return { curEl, curEl ? Error() : CREATE_ERROR(ERROR_NOT_FOUND) };
 }
