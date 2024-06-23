@@ -122,8 +122,8 @@ struct LinkedList
     ListElemIndexResult Find(const ListElement_t& value) const noexcept;
     ListElemIndexResult GetByIndex(size_t index) const noexcept;
 
-    Error StartLogging(const char* logFolder) noexcept;
-    Error EndLogging() noexcept;
+    static Error StartLogging(const char* logFolder) noexcept;
+    static Error EndLogging() noexcept;
 
     Error Dump() const noexcept;
     Error Dump(const Error& error) const noexcept;
